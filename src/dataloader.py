@@ -6,6 +6,7 @@ import os
 import numpy as np
 from PIL import Image
 import torch
+import cv2
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import albumentations as A
@@ -88,13 +89,19 @@ class _Dataset():
         img_name = self.img_names[idx]
         img_path = os.path.join(self.data_dir, 'training/images', img_name)
         gt_path = os.path.join(self.data_dir, 'training/groundtruth', img_name)
+        # print(f"Loading image: {img_path}")
         
-        img = Image.open(img_path)
-        gt = Image.open(gt_path)
+        img = cv2.imread(img_path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = img.astype(np.float32)/255.0
+
+        gt = cv2.imread(gt_path, cv2.IMREAD_GRAYSCALE)
+        assert np.unique(gt).tolist() == [0, 255]
+        gt[gt == 255] = 1
+        gt = gt.astype(np.float32)
+        gt = np.expand_dims(gt, axis=-1) # add channel dimension HxW -> HxWx1
         
         if self.transform:
-            img = np.array(img)/255.0
-            gt = np.array(gt)/255.0
             transformed = self.transform(image=img, mask=gt)
             img = transformed['image']
             gt = transformed['mask']
