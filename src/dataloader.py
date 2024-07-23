@@ -11,6 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
+import logging
 
 class RoadSegmentationDataset():
     def __init__(self, config):
@@ -27,8 +28,8 @@ class RoadSegmentationDataset():
         with open(val_list, 'r') as f:
             self.val_img_names = f.read().splitlines()
 
-        print(f'Found {len(self.train_img_names)} training images.')
-        print(f'Found {len(self.val_img_names)} validation images.')
+        logging.info(f'Found {len(self.train_img_names)} training images.')
+        logging.info(f'Found {len(self.val_img_names)} validation images.')
 
         if train_size is None:
             train_size = len(self.train_img_names)
@@ -51,8 +52,8 @@ class RoadSegmentationDataset():
             'val': val_images
         }
 
-        print(f'Using {train_size} training images.')
-        print(f'Using {val_size} validation images.')
+        logging.info(f'Using {train_size} training images.')
+        logging.info(f'Using {val_size} validation images.')
     
     def get_transform(self, split):
         
