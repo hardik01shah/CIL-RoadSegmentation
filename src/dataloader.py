@@ -59,16 +59,18 @@ class RoadSegmentationDataset():
         # Define the transformations for the train set
         if split == 'train':
             transform = A.Compose([
+                A.RandomCrop(width=256, height=256),    # TODO: Quick fix to ensure divisibility by 32 for UNet, FIX ME!
                 A.HorizontalFlip(),
                 A.VerticalFlip(),
-                A.Rotate(90),
-                ToTensorV2()
+                A.Rotate(limit=90, p=0.5),
+                ToTensorV2(transpose_mask=True)
             ])
         
         # Define the transformations for the validation set
         else:
             transform = A.Compose([
-                ToTensorV2()
+                A.Resize(width=256, height=256),        # TODO: Quick fix to ensure divisibility by 32 for UNet, FIX ME!
+                ToTensorV2(transpose_mask=True)
             ])
         
         return transform
