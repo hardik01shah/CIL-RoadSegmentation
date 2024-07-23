@@ -149,7 +149,7 @@ def main():
     os.makedirs(config['base_experiment_dir'], exist_ok=True)
     exp_dir = os.path.join(config['base_experiment_dir'], config['experiment_name'])
     if os.path.exists(exp_dir):
-        warnings.warn(f"Experiment directory {exp_dir} already exists!")
+        raise FileExistsError(f"Experiment directory {exp_dir} already exists.")
     os.makedirs(exp_dir, exist_ok=True)
     os.makedirs(os.path.join(exp_dir, 'checkpoints'), exist_ok=True)
     os.makedirs(os.path.join(exp_dir, 'logs'), exist_ok=True)
