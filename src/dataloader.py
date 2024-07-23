@@ -13,12 +13,14 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
 class RoadSegmentationDataset():
-    def __init__(self, data_dir, train_size, val_size):
-        self.data_dir = data_dir
+    def __init__(self, config):
+        self.data_dir = config['data']['data_dir']
+        train_size = config['data']['train_size']
+        val_size = config['data']['val_size']
 
         # Load the image names
-        train_list = os.path.join(data_dir, 'train.txt')
-        val_list = os.path.join(data_dir, 'val.txt')
+        train_list = os.path.join(self.data_dir, 'train.txt')
+        val_list = os.path.join(self.data_dir, 'val.txt')
 
         with open(train_list, 'r') as f:
             self.train_img_names = f.read().splitlines()
@@ -112,11 +114,15 @@ class _Dataset():
         }
 
 if __name__ == '__main__':
-    data_dir = 'data'
-    train_size = 100
-    val_size = 20
+    config = {
+        'data': {
+            'data_dir': 'data',
+            'train_size': 100,
+            'val_size': 20
+        }
+    }
 
-    dataset = RoadSegmentationDataset(data_dir, train_size, val_size)
+    dataset = RoadSegmentationDataset(config)
     train_dataset = dataset.get_dataset('train')
     val_dataset = dataset.get_dataset('val')
 
