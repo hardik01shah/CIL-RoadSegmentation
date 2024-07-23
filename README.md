@@ -6,6 +6,9 @@ conda create --name cil python=3.9
 conda activate cil
 pip install -U segmentation-models-pytorch
 pip install -U albumentations
+pip install opencv-python
+pip install wandb
+pip install matplotlib
 ```
 
 # Directory Structure
