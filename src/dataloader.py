@@ -141,18 +141,26 @@ if __name__ == '__main__':
         img = data['image']
         gt = data['gt']
 
+        print(f"Image shape: {img.shape}")
+        print(f"Ground truth shape: {gt.shape}")
+
         for j in range(img.size(0)):
             img_j = img[j].permute(1, 2, 0).numpy()
             gt_j = gt[j].numpy()
-            
-            img_j = (img_j * 255).astype(np.uint8)
-            gt_j = (gt_j * 255).astype(np.uint8)
+
+            img_j = (img_j*255).astype(np.uint8)
+            o_img_j = img_j.copy()
+            o_img_j[gt_j == 1] = [255, 0, 0]
+
+            gt_j = (gt_j*255).astype(np.uint8)
 
             img_j = Image.fromarray(img_j)
+            o_img_j = Image.fromarray(o_img_j)
             gt_j = Image.fromarray(gt_j, mode='L')
 
-            img_j.save(f'tmp/train_img_{i}_{j}.png')
-            gt_j.save(f'tmp/train_gt_{i}_{j}.png')
+            img_j.save(f'tmp/img_{i}_{j}.png')
+            o_img_j.save(f'tmp/o_img_{i}_{j}.png')
+            gt_j.save(f'tmp/gt_{i}_{j}.png')
 
         if i == 0:
             break
