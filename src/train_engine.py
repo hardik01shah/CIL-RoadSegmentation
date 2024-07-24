@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 import wandb
 import math
 import logging
@@ -95,6 +96,9 @@ class TrainEngine:
             if not math.isfinite(loss.item()):
                 logging.error(f"Loss is {loss.item()}, stopping training")
                 sys.exit(1)
+            
+            # Convert prediction to [0-1] heatmap using sigmoid
+            pred = nn.functional.sigmoid(pred)
 
             # Compute metrics
             metrics = segmentation_metrics(pred, gt, self.config)
@@ -207,6 +211,9 @@ class TrainEngine:
                 if not math.isfinite(loss.item()):
                     logging.error(f"Loss is {loss.item()}, stopping validation")
                     sys.exit(1)
+                
+                # Convert prediction to [0-1] heatmap using sigmoid
+                pred = nn.functional.sigmoid(pred)
 
                 # Compute metrics
                 metrics = segmentation_metrics(pred, gt, self.config)
