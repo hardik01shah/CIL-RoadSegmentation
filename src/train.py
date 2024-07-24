@@ -73,6 +73,10 @@ def train(config):
     # Initialize the loss function
     if config['loss']['name'] == 'weighted_bce':
         criterion = losses.weighted_bce
+    elif config['loss']['name'] == 'focal':
+        criterion = losses.focal
+    elif config['loss']['name'] == 'bce_dice':
+        criterion = losses.bce_dice
     else:
         raise NotImplementedError(f"Loss function {config['loss']['name']} not implemented.")
     
