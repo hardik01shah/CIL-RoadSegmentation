@@ -125,7 +125,8 @@ def train(config):
         id=wandb_id
     )
 
-    
+    wandb.watch(model)
+
     # Train the model
     best_f1 = 0.0
     for epoch in range(config['train']['num_epochs']):
@@ -139,6 +140,8 @@ def train(config):
             if cur_f1 > best_f1:
                 best_f1 = cur_f1
                 engine.save_model(config['ckpt_dir'], 'best_model.pth')
+    
+    wandb.finish()
 
 def main():
     args = parse_args()
