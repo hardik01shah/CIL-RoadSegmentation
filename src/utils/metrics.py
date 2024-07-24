@@ -85,6 +85,9 @@ def plot_pr_curve(precision, recall, f1, thresholds):
     Plot the precision-recall curve and return the image.
     """
 
+    # Clear the current figure
+    plt.clf()
+
     plt.plot(recall, precision, label='Precision-Recall Curve')
     plt.plot(recall, f1, label='F1 Score')
 
