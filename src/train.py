@@ -55,7 +55,7 @@ def train(config):
 
     # Load the model
     if config['model']['name'] == 'unet':
-        model = Unet()
+        model = Unet(encoder_name = config['model']['backbone'])
         model = model.to(device)
     else:
         raise NotImplementedError(f"Model {config['model']['name']} not implemented.")
