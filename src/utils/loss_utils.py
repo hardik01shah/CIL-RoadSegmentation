@@ -45,6 +45,29 @@ class DiceBCELoss(nn.Module):
         
         return Dice_BCE
     
+class TverskyLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True, Linear = False):
+        super(TverskyLoss, self).__init__()
+        self.linear = Linear
+
+    def forward(self, inputs, targets, smooth=1, alpha=0.7, beta=0.3):
+        
+        if self.linear:
+            inputs = F.sigmoid(inputs)
+        
+        #flatten label and prediction tensors
+        inputs = inputs.view(-1)
+        targets = targets.view(-1)
+        
+        #True Positives, False Positives & False Negatives
+        TP = (inputs * targets).sum()    
+        FP = ((1-targets) * inputs).sum()
+        FN = (targets * (1-inputs)).sum()
+        
+        Tversky = (TP + smooth) / (TP + alpha*FP + beta*FN + smooth)  
+        
+        return 1 - Tversky
+    
 class IoULoss(nn.Module):
     def __init__(self, weight=None, size_average=True, Linear = False):
         super(IoULoss, self).__init__()
