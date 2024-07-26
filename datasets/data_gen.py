@@ -6,16 +6,22 @@ import os
 
 SIZE = 400
 SAVE_DIR = "Full_Dataset"
-SAVE_THRESH = [2, 180]
+SAVE_THRESH = [25, 180]
 PRINT_FAILS = False
+px_pr = []
 
 def get_image(path, divs = 1):
 
     img = Image.open(path).resize((SIZE*divs, SIZE*divs))
     np_img = np.asarray(img)
-
     return np_img
 
+def px_percent(mask):
+
+    # px_low = mask > SAVE_THRESH[0]
+    # px_high = mask < SAVE_THRESH[1]
+
+    return np.mean(mask > 0)
 
 def get_road(mask, idx = 0):
 
@@ -29,7 +35,11 @@ def get_road(mask, idx = 0):
     return road
 
 def save_img(image, out_path):
-    plt.imsave(out_path, image, cmap = "grey")
+    # plt.imsave(out_path, image, cmap = "grey")
+    
+    image = image.astype(np.uint8)
+    img = Image.fromarray(image)
+    img.save(out_path)
 
 def split_image(image, divs):
     images = []
@@ -39,7 +49,6 @@ def split_image(image, divs):
 
     return images
 
-        
 
 def save_dirs(out_path):
     if not os.path.exists(out_path):
@@ -64,6 +73,8 @@ def aerial_seg(dir = "aerial"):
             mask = get_image(os.path.join(dir, city, file.split('_')[0] + "_labels.png"))
             mask = get_road(mask, idx = 0)
             if mask.mean() > SAVE_THRESH[0] and mask.mean() < SAVE_THRESH[1]:
+
+                px_pr.append(px_percent(mask))
             
                 image_list.append("images/" + file)
                 mask_list.append("groundtruth/" + file.split('_')[0] + "_labels.png")
@@ -105,6 +116,8 @@ def mass_seg(DIVS = 5, dir = "mass/tiff"):
             mask_divs = split_image(mask, DIVS)
             for idx in range(len(image_divs)):
                 if mask_divs[idx].mean() > SAVE_THRESH[0] and mask_divs[idx].mean() < SAVE_THRESH[1]:
+
+                    px_pr.append(px_percent(mask_divs[idx]))
                 
                     image_list.append("images/" + image_path.split('.')[0]+f'_{idx}.png')
                     mask_list.append("groundtruth/" + mask_path.split('.')[0]+f'_{idx}_labels.png')
@@ -146,6 +159,8 @@ def city_scale_seg(DIVS = 8, dir = "cityScale/data"):
             mask_divs = split_image(mask, DIVS)
             for idx in range(len(image_divs)):
                 if mask_divs[idx].mean() > SAVE_THRESH[0] and mask_divs[idx].mean() < SAVE_THRESH[1]:
+
+                    px_pr.append(px_percent(mask_divs[idx]))
                 
                     image_list.append("images/" + image_path.split('.')[0]+f'_{idx}.png')
                     mask_list.append("groundtruth/" + mask_path.split('.')[0]+f'_{idx}_labels.png')
@@ -175,13 +190,19 @@ if __name__ == "__main__":
     image_list.extend(images)
     mask_list.extend(masks)
 
+    print(np.mean(px_pr))
+
     images, masks = aerial_seg()
     image_list.extend(images)
     mask_list.extend(masks)
 
+    print(np.mean(px_pr))
+
     images, masks = mass_seg()
     image_list.extend(images)
     mask_list.extend(masks)
+
+    print(np.mean(px_pr))
 
     with open(f'{SAVE_DIR}/images.txt', 'w') as fp:
         fp.write('\n'.join(image_list))
