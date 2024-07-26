@@ -18,7 +18,7 @@ import numpy as np
 import random
 import torch
 from torch.utils.data import DataLoader
-from segmentation_models_pytorch import Unet
+from segmentation_models_pytorch import Unet, UnetPlusPlus, DeepLabV3Plus, Linknet
 
 from train_engine import TrainEngine
 import utils.losses as losses
@@ -56,9 +56,15 @@ def train(config):
     # Load the model
     if config['model']['name'] == 'unet':
         model = Unet(encoder_name = config['model']['backbone'])
-        model = model.to(device)
+    elif config['model']['name'] == 'UnetPlusPlus':
+        model = UnetPlusPlus(encoder_name = config['model']['backbone'])
+    elif config['model']['name'] == 'DeepLabV3Plus':
+        model = DeepLabV3Plus(encoder_name = config['model']['backbone'])
+    elif config['model']['name'] == 'Linknet':
+        model = Linknet(encoder_name = config['model']['backbone'])
     else:
         raise NotImplementedError(f"Model {config['model']['name']} not implemented.")
+    model = model.to(device)
     
     # Initialize the optimizer
     if config['train']['optimizer']['name'] == 'adam':
