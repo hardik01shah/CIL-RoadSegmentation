@@ -1,0 +1,23 @@
+device: cpu
+submission_name: eval_base
+test_data_dir: data/test/images
+pred_dir_base: submissions
+patch_size: 256
+metrics:
+  eps: 1.0e-7
+
+models: [
+  {
+    name: unet,
+    backbone: resnet34,
+    ckpt_path: experiments/base/checkpoints/best_model.pth,
+    threshold: 0.5
+  },
+  {
+    name: unet,
+    backbone: resnet34,
+    ckpt_path: experiments/base/checkpoints/best_model.pth,
+    threshold: 0.5
+  }
+]
+
