@@ -26,7 +26,7 @@ metrics:
 
 model:
   name: DeepLabV3Plus
-  backbone: timm-resnest50d
+  backbone: resnest50d # timm-resnest50d
   pretrained: true
 
 train:

@@ -26,7 +26,7 @@ metrics:
 
 model:
   name: DeepLabV3Plus
-  backbone: timm-res2net101_26w_4s
+  backbone: res2net101_26w_4s # timm-res2net101_26w_4s
   pretrained: true
 
 train:
