@@ -24,6 +24,33 @@ def weighted_bce(pred, gt, config):
     
     return loss
 
+def patch_bce(pred, gt, config):
+    """
+    Compute the weighted binary cross entropy loss.
+    
+    Args:
+        pred (torch.Tensor): Predicted segmentation mask.
+        gt (torch.Tensor): Ground truth segmentation mask.
+    
+    Returns:
+        torch.Tensor: Weighted binary cross entropy loss.
+    """
+    
+    pos_weight = config['loss']['pos_weight']
+
+    # Check shape - [N, C, H, W]
+    assert pred.size() == gt.size()
+    
+    b,c,h,w = pred.shape
+
+    pred = pred.reshape(b, 16,16,16,16).permute(0,1,3,2,4).reshape(b, 16*16,-1).mean(axis = 2)
+    gt = gt.reshape(b, 16,16,16,16).permute(0,1,3,2,4).reshape(b, 16*16,-1).mean(axis = 2) > 0.25
+    
+    bce_loss = torch.nn.BCEWithLogitsLoss(pos_weight=gt * pos_weight, reduction='mean')
+    loss = bce_loss(pred, gt*1.0)
+    
+    return loss
+
 def bce_dice(pred, gt, config):
     """
     Compute the BCE Dice loss.

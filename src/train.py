@@ -76,13 +76,15 @@ def train(config):
     else:
         raise NotImplementedError(f"Optimizer {config['train']['optimizer']['name']} not implemented.")
     
-    # Initialize the loss function
+    # Initialize the loss function 
     if config['loss']['name'] == 'weighted_bce':
         criterion = losses.weighted_bce
     elif config['loss']['name'] == 'focal':
         criterion = losses.focal
     elif config['loss']['name'] == 'bce_dice':
         criterion = losses.bce_dice
+    elif config['loss']['name'] == 'patch_bce':
+        criterion = losses.patch_bce
     else:
         raise NotImplementedError(f"Loss function {config['loss']['name']} not implemented.")
     
