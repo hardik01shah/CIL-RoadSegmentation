@@ -30,11 +30,11 @@ def initialize_models(config):
     for model_config in config['models']:
         if model_config['name'] == 'unet':
             cur_model = Unet(encoder_name=model_config['backbone'])
-        elif model_config['name'] == 'unet++':
+        elif model_config['name'] == 'UnetPlusPlus':
             cur_model = UnetPlusPlus(encoder_name=model_config['backbone'])
-        elif model_config['name'] == 'deeplabv3+':
+        elif model_config['name'] == 'DeepLabV3Plus':
             cur_model = DeepLabV3Plus(encoder_name=model_config['backbone'])
-        elif model_config['name'] == 'linknet':
+        elif model_config['name'] == 'Linknet':
             cur_model = Linknet(encoder_name=model_config['backbone'])
         else:
             raise ValueError(f"Model {model_config['name']} not recognized.")
@@ -140,7 +140,8 @@ def main():
         pred_filenames.append(pred_filename)
 
     # Generate the submission file
-    masks_to_submission(submission_path, pred_dir, *image_filenames)
+    # masks_to_submission(submission_path, pred_dir, *image_filenames)
+    masks_to_submission(submission_path, pred_dir, *pred_filenames)
 
 if __name__ == '__main__':
     main()

@@ -2,11 +2,13 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 from tqdm import tqdm 
+import cv2
 import os
 
 SIZE = 400
 SAVE_DIR = "Full_Dataset"
-SAVE_THRESH = [25, 180]
+SAVE_THRESH = [0.1, .9]
+IMG_THRESH = 0.20
 PRINT_FAILS = False
 px_pr = []
 
@@ -18,10 +20,11 @@ def get_image(path, divs = 1):
 
 def px_percent(mask):
 
-    # px_low = mask > SAVE_THRESH[0]
-    # px_high = mask < SAVE_THRESH[1]
-
     return np.mean(mask > 0)
+
+def img_white_percent(img):
+
+    return np.mean(img == [255, 255, 255])
 
 def get_road(mask, idx = 0):
 
@@ -49,6 +52,7 @@ def split_image(image, divs):
 
     return images
 
+        
 
 def save_dirs(out_path):
     if not os.path.exists(out_path):
@@ -72,10 +76,12 @@ def aerial_seg(dir = "aerial"):
             image = get_image(os.path.join(dir, city, file))
             mask = get_image(os.path.join(dir, city, file.split('_')[0] + "_labels.png"))
             mask = get_road(mask, idx = 0)
-            if mask.mean() > SAVE_THRESH[0] and mask.mean() < SAVE_THRESH[1]:
-
-                px_pr.append(px_percent(mask))
+            mask_prx = px_percent(mask)
             
+            if mask_prx > SAVE_THRESH[0] and mask_prx < SAVE_THRESH[1] and img_white_percent(image) < IMG_THRESH:
+
+                px_pr.append(mask_prx)
+
                 image_list.append("images/" + file)
                 mask_list.append("groundtruth/" + file.split('_')[0] + "_labels.png")
 
@@ -115,10 +121,10 @@ def mass_seg(DIVS = 5, dir = "mass/tiff"):
             image_divs = split_image(image, DIVS)
             mask_divs = split_image(mask, DIVS)
             for idx in range(len(image_divs)):
-                if mask_divs[idx].mean() > SAVE_THRESH[0] and mask_divs[idx].mean() < SAVE_THRESH[1]:
-
-                    px_pr.append(px_percent(mask_divs[idx]))
-                
+                mask_prx = px_percent(mask_divs[idx])
+                if mask_prx > SAVE_THRESH[0] and mask_prx < SAVE_THRESH[1] and img_white_percent(image_divs[idx]) < IMG_THRESH:
+                    
+                    px_pr.append(mask_prx)
                     image_list.append("images/" + image_path.split('.')[0]+f'_{idx}.png')
                     mask_list.append("groundtruth/" + mask_path.split('.')[0]+f'_{idx}_labels.png')
 
@@ -158,10 +164,11 @@ def city_scale_seg(DIVS = 8, dir = "cityScale/data"):
             image_divs = split_image(image, DIVS)
             mask_divs = split_image(mask, DIVS)
             for idx in range(len(image_divs)):
-                if mask_divs[idx].mean() > SAVE_THRESH[0] and mask_divs[idx].mean() < SAVE_THRESH[1]:
-
-                    px_pr.append(px_percent(mask_divs[idx]))
+                mask_prx = px_percent(mask_divs[idx])
                 
+                if mask_prx > SAVE_THRESH[0] and mask_prx < SAVE_THRESH[1] and img_white_percent(image_divs[idx]) < IMG_THRESH:
+
+                    px_pr.append(mask_prx)
                     image_list.append("images/" + image_path.split('.')[0]+f'_{idx}.png')
                     mask_list.append("groundtruth/" + mask_path.split('.')[0]+f'_{idx}_labels.png')
 
