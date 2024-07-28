@@ -1,6 +1,6 @@
 seed: 0
 device: cuda
-experiment_name: dice_bce_resnet34
+experiment_name: dice_bce_resnet101
 base_experiment_dir: experiments
 
 data:
@@ -26,20 +26,20 @@ metrics:
 
 model:
   name: unet
-  backbone: resnet34
+  backbone: resnet101
   pretrained: true
 
 train:
-  batch_size: 4
+  batch_size: 16
   num_workers: 4
-  num_epochs: 20
+  num_epochs: 10
   optimizer:
     name: adam
     lr: 0.001
     lr_scheduler: null
     weight_decay: 0.0
   log_interval: 1
-  save_interval: 1
+  save_interval: 3
 
 val:
   batch_size: 4

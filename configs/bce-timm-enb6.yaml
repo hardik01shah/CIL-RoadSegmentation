@@ -1,10 +1,10 @@
 seed: 0
 device: cuda
-experiment_name: bce_resnet101
+experiment_name: bce-timm-enb6
 base_experiment_dir: experiments
 
 data:
-  data_dir: datasets/Full_Dataset
+  data_dir: datasets/New_Dataset
   train_size: null
   val_size: null
 
@@ -17,7 +17,7 @@ logging:
 
 loss:
   name: weighted_bce
-  pos_weight: 1.0
+  pos_weight: 7.0
 
 metrics:
   eps: 1.0e-7
@@ -25,14 +25,14 @@ metrics:
   num_thresholds: 10  # number of thresholds for PR curve
 
 model:
-  name: unet
-  backbone: resnet101
+  name: DeepLabV3Plus
+  backbone: timm-efficientnet-b6
   pretrained: true
 
 train:
-  batch_size: 16
+  batch_size: 4
   num_workers: 4
-  num_epochs: 20
+  num_epochs: 10
   optimizer:
     name: adam
     lr: 0.001

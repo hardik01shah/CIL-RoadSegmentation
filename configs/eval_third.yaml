@@ -1,0 +1,66 @@
+device: cpu
+submission_name: eval_third_avg
+test_data_dir: datasets/Contest_data/test/images
+pred_dir_base: submissions
+patch_size: 256
+threshold: 0.5
+metrics:
+  eps: 1.0e-7
+
+models: [
+  # {
+  #   name: unet,
+  #   backbone: resnet34,
+  #   ckpt_path: experiments/bce_resnet35/checkpoints/best_model.pth,
+  #   threshold: 0.16
+  # },
+  # {
+  #   name: unet,
+  #   backbone: resnet34,
+  #   ckpt_path: experiments/focal_resnet34/checkpoints/best_model.pth,
+  #   threshold: 0.26
+  # },
+  # {
+  #   name: unet,
+  #   backbone: resnet34,
+  #   ckpt_path: experiments/dice_bce_resnet34/checkpoints/best_model.pth,
+  #   threshold: 0.05
+  # },
+  # {
+  #   name: unet,
+  #   backbone: resnet101,
+  #   ckpt_path: experiments/bce_resnet101/checkpoints/best_model.pth,
+  #   threshold: 0.16
+  # },
+  # {
+  #   name: unet,
+  #   backbone: resnet101,
+  #   ckpt_path: experiments/focal_resnet101/checkpoints/best_model.pth,
+  #   threshold: 0.16
+  # },
+  {
+    name: DeepLabV3Plus,
+    backbone: timm-efficientnet-b6,
+    ckpt_path: experiments/bce-timm-enb6/checkpoints/best_model.pth,
+    threshold: 0.68
+  },
+  # {
+  #   name: DeepLabV3Plus,
+  #   backbone: tu-res2net101_26w_4s,
+  #   ckpt_path: experiments/bce-timm-101_26w_4s/checkpoints/best_model.pth,
+  #   threshold: 0.58
+  # },
+  # {
+  #   name: DeepLabV3Plus,
+  #   backbone: tu-res2next50,
+  #   ckpt_path: experiments/bce-timm50d/checkpoints/best_model.pth,
+  #   threshold: 0.58
+  # },
+  # {
+  #   name: DeepLabV3Plus,
+  #   backbone: tu-resnest101e,
+  #   ckpt_path: experiments/bce-timm101e/checkpoints/best_model.pth,
+  #   threshold: 0.68
+  # }
+]
+

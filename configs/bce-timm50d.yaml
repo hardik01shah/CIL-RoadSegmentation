@@ -1,10 +1,10 @@
 seed: 0
 device: cuda
-experiment_name: focal_resnet34
+experiment_name: bce-timm50d_lr_pw_1
 base_experiment_dir: experiments
 
 data:
-  data_dir: datasets/Full_Dataset
+  data_dir: datasets/New_Dataset
   train_size: null
   val_size: null
 
@@ -16,7 +16,7 @@ logging:
     id: unet-test-0
 
 loss:
-  name: focal
+  name: weighted_bce
   pos_weight: 1.0
 
 metrics:
@@ -25,21 +25,21 @@ metrics:
   num_thresholds: 10  # number of thresholds for PR curve
 
 model:
-  name: unet
-  backbone: resnet34
+  name: DeepLabV3Plus
+  backbone: tu-res2next50
   pretrained: true
 
 train:
-  batch_size: 4
+  batch_size: 16
   num_workers: 4
-  num_epochs: 50
+  num_epochs: 10
   optimizer:
     name: adam
-    lr: 0.001
+    lr: 0.00001
     lr_scheduler: null
     weight_decay: 0.0
   log_interval: 1
-  save_interval: 1
+  save_interval: 3
 
 val:
   batch_size: 4

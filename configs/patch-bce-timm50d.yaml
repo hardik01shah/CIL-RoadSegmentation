@@ -1,10 +1,10 @@
 seed: 0
 device: cuda
-experiment_name: bce_resnet101
+experiment_name: patch-bce-timm50d
 base_experiment_dir: experiments
 
 data:
-  data_dir: datasets/Full_Dataset
+  data_dir: datasets/New_Dataset
   train_size: null
   val_size: null
 
@@ -16,7 +16,7 @@ logging:
     id: unet-test-0
 
 loss:
-  name: weighted_bce
+  name: patch_bce
   pos_weight: 1.0
 
 metrics:
@@ -25,17 +25,17 @@ metrics:
   num_thresholds: 10  # number of thresholds for PR curve
 
 model:
-  name: unet
-  backbone: resnet101
+  name: DeepLabV3Plus
+  backbone: tu-res2next50
   pretrained: true
 
 train:
   batch_size: 16
   num_workers: 4
-  num_epochs: 20
+  num_epochs: 10
   optimizer:
     name: adam
-    lr: 0.001
+    lr: 0.0001
     lr_scheduler: null
     weight_decay: 0.0
   log_interval: 1

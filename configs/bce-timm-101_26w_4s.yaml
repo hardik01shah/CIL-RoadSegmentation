@@ -1,10 +1,10 @@
 seed: 0
 device: cuda
-experiment_name: bce_resnet35
+experiment_name: bce-timm-101_26w_4s
 base_experiment_dir: experiments
 
 data:
-  data_dir: datasets/Full_Dataset
+  data_dir: datasets/New_Dataset
   train_size: null
   val_size: null
 
@@ -17,7 +17,7 @@ logging:
 
 loss:
   name: weighted_bce
-  pos_weight: 1.0
+  pos_weight: 7.0
 
 metrics:
   eps: 1.0e-7
@@ -26,20 +26,20 @@ metrics:
 
 model:
   name: DeepLabV3Plus
-  backbone: resnest101e # timm-resnest101e
+  backbone: tu-res2net101_26w_4s
   pretrained: true
 
 train:
-  batch_size: 4
+  batch_size: 16
   num_workers: 4
-  num_epochs: 50
+  num_epochs: 10
   optimizer:
     name: adam
-    lr: 0.001
+    lr: 0.0001
     lr_scheduler: null
     weight_decay: 0.0
   log_interval: 1
-  save_interval: 1
+  save_interval: 3
 
 val:
   batch_size: 4

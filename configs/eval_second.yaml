@@ -1,0 +1,35 @@
+device: cpu
+submission_name: eval_second_high_thresh
+test_data_dir: datasets/Contest_data/test/images
+pred_dir_base: submissions
+patch_size: 256
+metrics:
+  eps: 1.0e-7
+
+models: [
+  {
+    name: DeepLabV3Plus,
+    backbone: timm-efficientnet-b6,
+    ckpt_path: experiments/bce-timm-enb6/checkpoints/best_model.pth,
+    threshold: 0.68
+  },
+  {
+    name: DeepLabV3Plus,
+    backbone: tu-res2net101_26w_4s,
+    ckpt_path: experiments/bce-timm-101_26w_4s/checkpoints/best_model.pth,
+    threshold: 0.58
+  },
+  {
+    name: DeepLabV3Plus,
+    backbone: tu-res2next50,
+    ckpt_path: experiments/bce-timm50d/checkpoints/best_model.pth,
+    threshold: 0.58
+  },
+  {
+    name: DeepLabV3Plus,
+    backbone: tu-resnest101e,
+    ckpt_path: experiments/bce-timm101e/checkpoints/best_model.pth,
+    threshold: 0.68
+  }
+]
+
