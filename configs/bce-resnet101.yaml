@@ -1,0 +1,49 @@
+seed: 0
+device: cuda
+experiment_name: bce_resnet35
+base_experiment_dir: experiments
+
+data:
+  data_dir: datasets/Full_Dataset
+  train_size: null
+  val_size: null
+
+logging:
+  num_images: 4
+  wandb:
+    mode: online
+    group: tests
+    id: unet-test-0
+
+loss:
+  name: weighted_bce
+  pos_weight: 1.0
+
+metrics:
+  eps: 1.0e-7
+  threshold: 0.5      # threshold for binary classification
+  num_thresholds: 10  # number of thresholds for PR curve
+
+model:
+  name: UnetPlusPlus
+  backbone: resnet101
+  pretrained: true
+
+train:
+  batch_size: 4
+  num_workers: 4
+  num_epochs: 50
+  optimizer:
+    name: adam
+    lr: 0.001
+    lr_scheduler: null
+    weight_decay: 0.0
+  log_interval: 1
+  save_interval: 1
+
+val:
+  batch_size: 4
+  num_workers: 4
+  val_interval: 1
+  
+
