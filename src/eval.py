@@ -116,8 +116,7 @@ def main():
             cur_patch = torch.from_numpy(cur_patch).to(config['device'])
 
             inference_approach = config['inference_approach']
-            if inference_approach != 'union' or inference_approach != 'mean':
-                raise ValueError(f"Inference approach {inference_approach} not recognized.")
+                
             
             if inference_approach == 'union':
                 # Run inference on the ensemble of models
@@ -133,7 +132,7 @@ def main():
 
                 # Add prediction to the full prediction mask
                 i, j = patch['coords']
-                full_pred_mask[i:i+patch_size, j:j+patch_size] += pred_mask
+                full_pred_mask[i:i+patch_size, j:j+patch_size] += pred_mask.astype(np.uint8)
                 
                 # Threshold the full prediction mask
                 full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
@@ -153,9 +152,14 @@ def main():
                 i, j = patch['coords']
                 full_pred_mask[i:i+patch_size, j:j+patch_size] += (pred_mask > config['mean_threshold']).astype(np.uint8)
 
+                # Threshold the full prediction mask
+                full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
+            else:
+                raise ValueError(f"Inference approach {inference_approach} not recognized.")
+
         # Save the prediction mask
         pred_filename = os.path.join(pred_dir, os.path.basename(image_filename))
-        pred_img = Image.fromarray((full_pred_mask > 0)*255)
+        pred_img = Image.fromarray((full_pred_mask)*255)
         pred_img.save(pred_filename)
         pred_filenames.append(pred_filename)
 
