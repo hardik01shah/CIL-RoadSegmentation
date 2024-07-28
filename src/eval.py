@@ -116,8 +116,6 @@ def main():
             cur_patch = torch.from_numpy(cur_patch).to(config['device'])
 
             inference_approach = config['inference_approach']
-                
-            
             if inference_approach == 'union':
                 # Run inference on the ensemble of models
                 pred_mask = np.zeros((patch_size, patch_size))
@@ -154,6 +152,26 @@ def main():
 
                 # Threshold the full prediction mask
                 full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
+                
+            elif inference_approach == 'voting':
+                # Run inference on the ensemble of models
+                pred_mask = np.zeros((patch_size, patch_size))
+                for model, threshold in zip(models, thresholds):
+                    with torch.no_grad():
+                        pred = model(cur_patch)
+                        pred = nn.functional.sigmoid(pred)
+                        pred = pred.cpu().numpy()
+                        pred = pred.squeeze()
+                        pred = (pred > threshold).astype(np.float32)
+                        pred_mask += pred
+
+                # Add prediction to the full prediction mask
+                i, j = patch['coords']
+                full_pred_mask[i:i+patch_size, j:j+patch_size] += (pred_mask > len(models) // 2).astype(np.uint8)
+
+                # Threshold the full prediction mask
+                full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
+            
             else:
                 raise ValueError(f"Inference approach {inference_approach} not recognized.")
 
