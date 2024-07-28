@@ -102,79 +102,103 @@ def main():
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = img.astype(np.float32) / 255.0
 
-        # image size is 400x400, crop it into patches of 256x256
-        patch_size = config['patch_size']
-        patches = get_image_patches(img, patch_size)
+        if config["resize"]:
 
-        # Initialize the full prediction mask
-        full_pred_mask = np.zeros((400, 400))
+            # Initialize the full prediction mask
+            full_pred_mask = np.zeros((256, 256))
 
-        for patch in patches:
-            cur_patch = patch['patch']
-            cur_patch = np.transpose(cur_patch, (2, 0, 1))
-            cur_patch = np.expand_dims(cur_patch, axis=0)
-            cur_patch = torch.from_numpy(cur_patch).to(config['device'])
+            img = cv2.resize(img, (256,256))
+            img = np.transpose(img, (2, 0, 1))
+            img = np.expand_dims(img, axis=0)
+            img = torch.from_numpy(img).to(config['device'])
+            for model, threshold in zip(models, thresholds):
+                with torch.no_grad():
+                    pred = model(img)
+                    pred = nn.functional.sigmoid(pred)
+                    pred = pred.cpu().numpy()
+                    pred = pred.squeeze()
+                    full_pred_mask += pred / len(models)
 
-            inference_approach = config['inference_approach']
-            if inference_approach == 'union':
-                # Run inference on the ensemble of models
-                pred_mask = np.zeros((patch_size, patch_size))
-                for model, threshold in zip(models, thresholds):
-                    with torch.no_grad():
-                        pred = model(cur_patch)
-                        pred = nn.functional.sigmoid(pred)
-                        pred = pred.cpu().numpy()
-                        pred = pred.squeeze()
-                        pred = (pred > threshold).astype(np.float32)
-                        pred_mask += pred
+            full_pred_mask =  cv2.resize(full_pred_mask, (400,400))
+            # Add prediction to the full prediction mask
+            full_pred_mask = (full_pred_mask > config['mean_threshold']).astype(np.uint8) 
 
-                # Add prediction to the full prediction mask
-                i, j = patch['coords']
-                full_pred_mask[i:i+patch_size, j:j+patch_size] += pred_mask.astype(np.uint8)
+        
+        else:
+
+            # image size is 400x400, crop it into patches of 256x256
+            patch_size = config['patch_size']
+            patches = get_image_patches(img, patch_size)
+
+            # Initialize the full prediction mask
+            full_pred_mask = np.zeros((400, 400))
+
+            for patch in patches:
+                cur_patch = patch['patch']
+                cur_patch = np.transpose(cur_patch, (2, 0, 1))
+                cur_patch = np.expand_dims(cur_patch, axis=0)
+                cur_patch = torch.from_numpy(cur_patch).to(config['device'])
+
+                inference_approach = config['inference_approach']
+                if inference_approach == 'union':
+                    # Run inference on the ensemble of models
+                    pred_mask = np.zeros((patch_size, patch_size))
+                    for model, threshold in zip(models, thresholds):
+                        with torch.no_grad():
+                            pred = model(cur_patch)
+                            pred = nn.functional.sigmoid(pred)
+                            pred = pred.cpu().numpy()
+                            pred = pred.squeeze()
+                            pred = (pred > threshold).astype(np.float32)
+                            pred_mask += pred
+
+                    # Add prediction to the full prediction mask
+                    i, j = patch['coords']
+                    full_pred_mask[i:i+patch_size, j:j+patch_size] += pred_mask.astype(np.uint8)
+                    
+                    # Threshold the full prediction mask
+                    full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
+                    
+                elif inference_approach == 'mean':
+                    # Run inference on the ensemble of models
+                    pred_mask = np.zeros((patch_size, patch_size))
+                    for model, threshold in zip(models, thresholds):
+                        with torch.no_grad():
+                            pred = model(cur_patch)
+                            pred = nn.functional.sigmoid(pred)
+                            pred = pred.cpu().numpy()
+                            pred = pred.squeeze()
+                            pred_mask += pred / len(models)
+
+                    # Add prediction to the full prediction mask
+                    i, j = patch['coords']
+                    full_pred_mask[i:i+patch_size, j:j+patch_size] += (pred_mask > config['mean_threshold']).astype(np.uint8)
+
+                    # Threshold the full prediction mask
+                    full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
+                    
+                elif inference_approach == 'voting':
+                    # Run inference on the ensemble of models
+                    pred_mask = np.zeros((patch_size, patch_size))
+                    for model, threshold in zip(models, thresholds):
+                        with torch.no_grad():
+                            pred = model(cur_patch)
+                            pred = nn.functional.sigmoid(pred)
+                            pred = pred.cpu().numpy()
+                            pred = pred.squeeze()
+                            pred = (pred > threshold).astype(np.float32)
+                            pred_mask += pred
+
+                    # Add prediction to the full prediction mask
+                    i, j = patch['coords']
+                    full_pred_mask[i:i+patch_size, j:j+patch_size] += (pred_mask > len(models) // 2).astype(np.uint8)
+
+                    # Threshold the full prediction mask
+                    full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
                 
-                # Threshold the full prediction mask
-                full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
-                
-            elif inference_approach == 'mean':
-                # Run inference on the ensemble of models
-                pred_mask = np.zeros((patch_size, patch_size))
-                for model, threshold in zip(models, thresholds):
-                    with torch.no_grad():
-                        pred = model(cur_patch)
-                        pred = nn.functional.sigmoid(pred)
-                        pred = pred.cpu().numpy()
-                        pred = pred.squeeze()
-                        pred_mask += pred / len(models)
-
-                # Add prediction to the full prediction mask
-                i, j = patch['coords']
-                full_pred_mask[i:i+patch_size, j:j+patch_size] += (pred_mask > config['mean_threshold']).astype(np.uint8)
-
-                # Threshold the full prediction mask
-                full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
-                
-            elif inference_approach == 'voting':
-                # Run inference on the ensemble of models
-                pred_mask = np.zeros((patch_size, patch_size))
-                for model, threshold in zip(models, thresholds):
-                    with torch.no_grad():
-                        pred = model(cur_patch)
-                        pred = nn.functional.sigmoid(pred)
-                        pred = pred.cpu().numpy()
-                        pred = pred.squeeze()
-                        pred = (pred > threshold).astype(np.float32)
-                        pred_mask += pred
-
-                # Add prediction to the full prediction mask
-                i, j = patch['coords']
-                full_pred_mask[i:i+patch_size, j:j+patch_size] += (pred_mask > len(models) // 2).astype(np.uint8)
-
-                # Threshold the full prediction mask
-                full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
-            
-            else:
-                raise ValueError(f"Inference approach {inference_approach} not recognized.")
-
+                else:
+                    raise ValueError(f"Inference approach {inference_approach} not recognized.")
+        
         # Save the prediction mask
         pred_filename = os.path.join(pred_dir, os.path.basename(image_filename))
         pred_img = Image.fromarray((full_pred_mask)*255)
