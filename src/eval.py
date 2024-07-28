@@ -115,27 +115,47 @@ def main():
             cur_patch = np.expand_dims(cur_patch, axis=0)
             cur_patch = torch.from_numpy(cur_patch).to(config['device'])
 
-            # Run inference on the ensemble of models
-            pred_mask = np.zeros((patch_size, patch_size))
-            for model, threshold in zip(models, thresholds):
-                with torch.no_grad():
-                    pred = model(cur_patch)
-                    pred = nn.functional.sigmoid(pred)
-                    pred = pred.cpu().numpy()
-                    pred = pred.squeeze()
-                    pred = (pred > threshold).astype(np.float32)
-                    pred_mask += pred
+            inference_approach = config['inference_approach']
+            if inference_approach != 'union' or inference_approach != 'mean':
+                raise ValueError(f"Inference approach {inference_approach} not recognized.")
+            
+            if inference_approach == 'union':
+                # Run inference on the ensemble of models
+                pred_mask = np.zeros((patch_size, patch_size))
+                for model, threshold in zip(models, thresholds):
+                    with torch.no_grad():
+                        pred = model(cur_patch)
+                        pred = nn.functional.sigmoid(pred)
+                        pred = pred.cpu().numpy()
+                        pred = pred.squeeze()
+                        pred = (pred > threshold).astype(np.float32)
+                        pred_mask += pred
 
-            # Add prediction to the full prediction mask
-            i, j = patch['coords']
-            full_pred_mask[i:i+patch_size, j:j+patch_size] += pred_mask
+                # Add prediction to the full prediction mask
+                i, j = patch['coords']
+                full_pred_mask[i:i+patch_size, j:j+patch_size] += pred_mask
+                
+                # Threshold the full prediction mask
+                full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
+                
+            elif inference_approach == 'mean':
+                # Run inference on the ensemble of models
+                pred_mask = np.zeros((patch_size, patch_size))
+                for model, threshold in zip(models, thresholds):
+                    with torch.no_grad():
+                        pred = model(cur_patch)
+                        pred = nn.functional.sigmoid(pred)
+                        pred = pred.cpu().numpy()
+                        pred = pred.squeeze()
+                        pred_mask += pred / len(models)
 
-        # Threshold the full prediction mask
-        full_pred_mask = (full_pred_mask > 0).astype(np.uint8)
+                # Add prediction to the full prediction mask
+                i, j = patch['coords']
+                full_pred_mask[i:i+patch_size, j:j+patch_size] += (pred_mask > config['mean_threshold']).astype(np.uint8)
 
         # Save the prediction mask
         pred_filename = os.path.join(pred_dir, os.path.basename(image_filename))
-        pred_img = Image.fromarray(full_pred_mask*255)
+        pred_img = Image.fromarray((full_pred_mask > 0)*255)
         pred_img.save(pred_filename)
         pred_filenames.append(pred_filename)
 

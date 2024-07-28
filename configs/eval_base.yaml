@@ -21,3 +21,5 @@ models: [
   }
 ]
 
+inference_approach: mean # union, mean
+mean_threshold: 0.5
