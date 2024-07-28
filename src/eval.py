@@ -14,6 +14,7 @@ import argparse
 import yaml
 from segmentation_models_pytorch import Unet, UnetPlusPlus, DeepLabV3Plus, Linknet
 from tqdm import tqdm
+from utils.post_proc import *
 
 from utils.mask_to_submission import masks_to_submission
 
@@ -198,6 +199,13 @@ def main():
                 
                 else:
                     raise ValueError(f"Inference approach {inference_approach} not recognized.")
+
+        # Remove small artifacts and close small holes in the full_pred_mask map
+        full_pred_mask = remove_small_artifacts(full_pred_mask, threshold=8)
+        full_pred_mask = close_small_holes(full_pred_mask, kernel_size=16)
+
+        # add a buffer of 1 pixel around the walls (agent radius)
+        # full_pred_mask = 1-binary_erosion(1-full_pred_mask, iterations=1, structure=np.ones((2, 2)), border_value=1)
         
         # Save the prediction mask
         pred_filename = os.path.join(pred_dir, os.path.basename(image_filename))
