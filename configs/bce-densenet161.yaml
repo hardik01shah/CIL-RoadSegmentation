@@ -1,6 +1,6 @@
 seed: 0
 device: cuda
-experiment_name: bce-inceptionv4
+experiment_name: bce-densenet161
 base_experiment_dir: experiments
 
 data:
@@ -26,7 +26,7 @@ metrics:
 
 model:
   name: UnetPlusPlus
-  backbone: inceptionv4
+  backbone: densenet161
   pretrained: true
 
 train:
