@@ -77,9 +77,9 @@ def train(config):
     else:
         raise NotImplementedError(f"Optimizer {config['train']['optimizer']['name']} not implemented.")
     
-    if config['train']['optimizer']['scheduler'] == "rop":
+    if config['train']['optimizer']['lr_scheduler'] == "rop":
         scheduler = ReduceLROnPlateau(optimizer, 'min')
-    elif config['train']['optimizer']['scheduler'] == None:
+    elif config['train']['optimizer']['lr_scheduler'] == None:
         scheduler = None
     else:
         raise NotImplementedError(f"Scheduler {config['train']['optimizer']['scheduler']} not implemented")

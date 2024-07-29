@@ -125,8 +125,6 @@ class TrainEngine:
             # For the last batch, log the predictions and ground truth
             if data_iter_step == len(self.train_loader) - 1:
                 self.log_predictions(image, gt, pred, phase='train')
-            
-            self.scheduler.step()
 
     def log_predictions(self, image, gt, pred, phase):
         """
@@ -258,6 +256,8 @@ class TrainEngine:
         pr_img = plot_pr_curve(precision, recall, f1, self.thresholds)
         wandb.log({"val/pr_curve": wandb.Image(pr_img)}, step=self.global_step)
 
+        if self.scheduler is not None:
+            self.scheduler.step(f1[best_idx])
         return f1[best_idx]
 
     def save_model(self, save_dir, ckpt_name):
