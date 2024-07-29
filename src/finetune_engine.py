@@ -105,6 +105,7 @@ class FinetuneEngine:
             self.optimizer.zero_grad()
             
             pred = self.model(image)
+            pred = nn.functional.sigmoid(pred)
             
             full_pred = torch.zeros((bs, 16, 16)).unsqueeze(1).to(self.device)
             for i in range(16):
@@ -246,6 +247,7 @@ class FinetuneEngine:
 
                 # Forward pass
                 pred = self.model(image)
+                pred = nn.functional.sigmoid(pred)
                 
                 full_pred = torch.zeros((bs, 16, 16)).unsqueeze(1).to(self.device)
                 for i in range(16):
