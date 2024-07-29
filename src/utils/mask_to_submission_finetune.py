@@ -40,11 +40,12 @@ def mask_to_submission_strings(image_filename, mask_dir=None):
     assert im_arr.shape[1] == 25
     assert im_arr.shape[0] == 25
 
-    mask = np.zeros_like(im_arr)
+    mask = np.zeros((400, 400))
     for j in range(0, im_arr.shape[1]):
         for i in range(0, im_arr.shape[0]):
             label = im_arr[i, j] / 255
             mask[i, j] = int(label*255)
+            mask[i*16:(i+1)*16, j*16:(j+1)*16] = int(label*255)
             yield("{:03d}_{}_{},{}".format(img_number, j, i, label))
 
     if mask_dir:
