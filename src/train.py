@@ -18,6 +18,7 @@ import numpy as np
 import random
 import torch
 from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from segmentation_models_pytorch import Unet, UnetPlusPlus, DeepLabV3Plus, Linknet
 
 from train_engine import TrainEngine
@@ -65,7 +66,7 @@ def train(config):
     else:
         raise NotImplementedError(f"Model {config['model']['name']} not implemented.")
     model = model.to(device)
-    
+        
     # Initialize the optimizer
     if config['train']['optimizer']['name'] == 'adam':
         optimizer = torch.optim.Adam(
@@ -75,6 +76,13 @@ def train(config):
         )
     else:
         raise NotImplementedError(f"Optimizer {config['train']['optimizer']['name']} not implemented.")
+    
+    if config['train']['optimizer']['scheduler'] == "rop":
+        scheduler = ReduceLROnPlateau(optimizer, 'min')
+    elif config['train']['optimizer']['scheduler'] == None:
+        scheduler = None
+    else:
+        raise NotImplementedError(f"Scheduler {config['train']['optimizer']['scheduler']} not implemented")
     
     # Initialize the loss function 
     if config['loss']['name'] == 'weighted_bce':
@@ -111,6 +119,7 @@ def train(config):
         model=model,
         device=device,
         optimizer=optimizer,
+        scheduler=scheduler,
         criterion=criterion,
         train_loader=train_loader,
         val_loader=val_loader,

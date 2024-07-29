@@ -20,6 +20,7 @@ class TrainEngine:
         model,
         device,
         optimizer,
+        scheduler,
         criterion,
         train_loader,
         val_loader,
@@ -28,6 +29,7 @@ class TrainEngine:
         self.model = model
         self.device = device
         self.optimizer = optimizer
+        self.scheduler = scheduler
         self.criterion = criterion
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -123,6 +125,8 @@ class TrainEngine:
             # For the last batch, log the predictions and ground truth
             if data_iter_step == len(self.train_loader) - 1:
                 self.log_predictions(image, gt, pred, phase='train')
+            
+            self.scheduler.step()
 
     def log_predictions(self, image, gt, pred, phase):
         """
