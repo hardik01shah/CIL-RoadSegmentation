@@ -313,6 +313,7 @@ class FinetuneEngine:
         Save the model checkpoint.
         """
         to_save = {
+            'model': self.model.state_dict(),
             'classifier': self.classifier.state_dict(),
             'optimizer': self.optimizer.state_dict(),
             'epoch': self.epoch,
