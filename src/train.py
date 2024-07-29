@@ -40,6 +40,28 @@ def set_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+def load_model(config):
+
+    if config['model']['name'] == 'unet':
+        model = Unet(encoder_name=config['model']['backbone'])
+    elif config['model']['name'] == 'UnetPlusPlus':
+        model = UnetPlusPlus(encoder_name=config['model']['backbone'])
+    elif config['model']['name'] == 'DeepLabV3Plus':
+        model = DeepLabV3Plus(encoder_name=config['model']['backbone'])
+    elif config['model']['name'] == 'Linknet':
+        model = Linknet(encoder_name=config['model']['backbone'])
+    else:
+        raise ValueError(f"Model {model_config['name']} not recognized.")
+
+    
+    model.to(config['device'])
+    
+    if 'checkpoint' in config.keys() and config['checkpoint'] is not None:
+        model.load_state_dict(torch.load(config['checkpoint'])['model'])
+    model.train()
+
+    return model
+
 def train(config):
     
     # Set the seed
@@ -55,17 +77,7 @@ def train(config):
     logging.info(f'Using device {device}.')
 
     # Load the model
-    if config['model']['name'] == 'unet':
-        model = Unet(encoder_name = config['model']['backbone'])
-    elif config['model']['name'] == 'UnetPlusPlus':
-        model = UnetPlusPlus(encoder_name = config['model']['backbone'])
-    elif config['model']['name'] == 'DeepLabV3Plus':
-        model = DeepLabV3Plus(encoder_name = config['model']['backbone'])
-    elif config['model']['name'] == 'Linknet':
-        model = Linknet(encoder_name = config['model']['backbone'])
-    else:
-        raise NotImplementedError(f"Model {config['model']['name']} not implemented.")
-    model = model.to(device)
+    model = load_model(config)
         
     # Initialize the optimizer
     if config['train']['optimizer']['name'] == 'adam':
@@ -113,7 +125,7 @@ def train(config):
         shuffle=False,
         num_workers=config['val']['num_workers']
     )
-    
+
     # Initialize the training engine
     engine = TrainEngine(
         model=model,
