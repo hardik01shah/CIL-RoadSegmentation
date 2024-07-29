@@ -32,7 +32,6 @@ def parse_args():
     return args
 
 def set_seed(seed):
-    torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
@@ -58,7 +57,13 @@ def load_model(config):
     
     if 'checkpoint' in config.keys() and config['checkpoint'] is not None:
         model.load_state_dict(torch.load(config['checkpoint'])['model'])
-    model.eval()
+    
+    if config['freeze']:
+        model.eval()
+    else:
+        model.train()
+        print("Model is training")
+
 
     return model
 
@@ -80,8 +85,9 @@ def train(config):
     model = load_model(config)
     
     # Freeze the model
-    for param in model.parameters():
-        param.requires_grad = False
+    if config['freeze']:
+        for param in model.parameters():
+            param.requires_grad = False
         
     # Define a 3 layer MLP as the classifier
     classifier = torch.nn.Sequential(
@@ -89,11 +95,13 @@ def train(config):
         torch.nn.ReLU(),
         torch.nn.Linear(128, 1)
     )
+
+    classifier.to(config["device"])
         
     # Initialize the optimizer
     if config['train']['optimizer']['name'] == 'adam':
         optimizer = torch.optim.Adam(
-            classifier.parameters(),
+            list(classifier.parameters()) + list(model.parameters()) if not config['freeze'] else classifier.parameters(),
             lr=config['train']['optimizer']['lr'],
             weight_decay=config['train']['optimizer']['weight_decay']
         )

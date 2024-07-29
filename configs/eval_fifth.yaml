@@ -1,0 +1,20 @@
+device: cpu
+submission_name: eval_fifth_best
+test_data_dir: datasets/Contest_Dataset/test/images
+pred_dir_base: submissions
+patch_size: 256
+inference_approach: mean # union, mean, voting
+mean_threshold: 0.5
+resize: True
+metrics:
+  eps: 1.0e-7
+
+models: [
+  {
+    name: UnetPlusPlus,
+    backbone: resnet101,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/bce_resnet101_finetune/checkpoints/best_model.pth,
+    threshold: 0.37
+  },
+]
+

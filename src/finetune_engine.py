@@ -81,7 +81,10 @@ class FinetuneEngine:
     
     def train_one_epoch(self, epoch):
         self.classifier.train(True)
-        self.model.train(False)
+        if self.config['freeze']:
+            self.model.train(False)
+        else:
+            self.model.train(True)
         self.epoch = epoch
 
         for data_iter_step, data in enumerate(self.train_loader):
@@ -101,8 +104,7 @@ class FinetuneEngine:
             # Forward pass
             self.optimizer.zero_grad()
             
-            with torch.no_grad():
-                pred = self.model(image)
+            pred = self.model(image)
             
             full_pred = torch.zeros((bs, 16, 16)).unsqueeze(1).to(self.device)
             for i in range(16):
@@ -154,13 +156,15 @@ class FinetuneEngine:
         threshold = self.config['metrics']['threshold']
         
         # Convert pred and gt to 256x256 from 16x16
-        gt_full = torch.zeros((gt.size(0), 1, 256, 256)).to(self.device)
-        pred_full = torch.zeros((pred.size(0), 1, 256, 256)).to(self.device)
+        gt_full = torch.ones((gt.size(0), 1, 256, 256)).to(self.device)
+        pred_full = torch.ones((pred.size(0), 1, 256, 256)).to(self.device)
         for i in range(16):
             for j in range(16):
-                gt_full[:, :, i*16:(i+1)*16, j*16:(j+1)*16] = gt[:, :, i, j]
-                pred_full[:, :, i*16:(i+1)*16, j*16:(j+1)*16] = pred[:, :, i, j]
+                gt_full[:, :, i*16:(i+1)*16, j*16:(j+1)*16] *= gt[:, :, i, j].unsqueeze(-1).unsqueeze(-1)
+                pred_full[:, :, i*16:(i+1)*16, j*16:(j+1)*16] *= pred[:, :, i, j].unsqueeze(-1).unsqueeze(-1)
 
+        pred = pred_full
+        gt = gt_full
         imgs = []
         heatmaps = []
         pred_t = [] # Thresholded predictions with given threshold
@@ -241,8 +245,7 @@ class FinetuneEngine:
                 gt = gt.float().reshape(bs, 16, 16).unsqueeze(1)
 
                 # Forward pass
-                with torch.no_grad():
-                    pred = self.model(image)
+                pred = self.model(image)
                 
                 full_pred = torch.zeros((bs, 16, 16)).unsqueeze(1).to(self.device)
                 for i in range(16):

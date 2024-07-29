@@ -1,11 +1,12 @@
 seed: 0
 device: cuda
-experiment_name: bce_resnet101_finetune_v2
+experiment_name: bce-mobilenet_MLP
 base_experiment_dir: experiments
-checkpoint: /project/Temp/CIL-RoadSegmentation/experiments/bce_resnet101/checkpoints/best_model.pth
+# checkpoint: /project/Temp/CIL-RoadSegmentation/experiments/bce-mobilenet_v2/checkpoints/best_model.pth
+freeze: False
 
 data:
-  data_dir: datasets/Contest_Dataset
+  data_dir: datasets/New_Dataset
   train_size: null
   val_size: null
 
@@ -17,7 +18,7 @@ logging:
     id: unet-test-0
 
 loss:
-  name: patch_bce
+  name: weighted_bce
   pos_weight: 1.0
 
 metrics:
@@ -27,20 +28,20 @@ metrics:
 
 model:
   name: UnetPlusPlus
-  backbone: resnet101
+  backbone: mobilenet_v2
   pretrained: true
 
 train:
   batch_size: 4
   num_workers: 4
-  num_epochs: 30
+  num_epochs: 10
   optimizer:
     name: adam
     lr: 0.0001
     lr_scheduler: rop
     weight_decay: 0.0
-  log_interval: 1
-  save_interval: 10
+  log_interval: 100
+  save_interval: 3
 
 val:
   batch_size: 4

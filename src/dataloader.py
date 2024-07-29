@@ -75,7 +75,8 @@ class RoadSegmentationDataset():
         # Define the transformations for the train set
         if split == 'train':
             transform = A.Compose([
-                A.RandomCrop(width=256, height=256),    # TODO: Quick fix to ensure divisibility by 32 for UNet, FIX ME!
+                # A.RandomCrop(width=256, height=256),    # TODO: Quick fix to ensure divisibility by 32 for UNet, FIX ME!
+                A.Resize(width=256, height=256),
                 A.HorizontalFlip(),
                 A.VerticalFlip(),
                 A.Rotate(limit=90, p=0.5),
