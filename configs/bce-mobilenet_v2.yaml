@@ -1,6 +1,6 @@
 seed: 0
 device: cuda
-experiment_name: bce-xception
+experiment_name: bce-mobilenet_v2
 base_experiment_dir: experiments
 
 data:
@@ -26,7 +26,7 @@ metrics:
 
 model:
   name: UnetPlusPlus
-  backbone: xception
+  backbone: mobilenet_v2
   pretrained: true
 
 train:

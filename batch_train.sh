@@ -10,7 +10,7 @@
 # python src/train.py --config=configs/patch-bce-timm50d.yaml
 # python src/train.py --config=configs/patch-bce-timm101e.yaml
 
-python src/train.py --config=configs/bce-enetb6.yaml
+# python src/train.py --config=configs/bce-enetb6.yaml
 python src/train.py --config=configs/bce-inceptionv4.yaml
-python src/train.py --config=configs/bce-resnet101.yaml
-python src/train.py --config=configs/bce-xception.yaml
+# python src/train.py --config=configs/bce-resnet101.yaml
+python src/train.py --config=configs/bce-mobilenet_v2.yaml
