@@ -49,7 +49,7 @@ def mask_to_submission_strings(image_filename, mask_dir=None):
             yield("{:03d}_{}_{},{}".format(img_number, j, i, label))
 
     if mask_dir:
-        save_mask_as_img(mask, os.path.join(mask_dir, "mask_" + image_filename.split("/")[-1]))
+        save_mask_as_img(mask.astype(np.uint8), os.path.join(mask_dir, "mask_" + image_filename.split("/")[-1]))
     
 
 def save_mask_as_img(img_arr, mask_filename):

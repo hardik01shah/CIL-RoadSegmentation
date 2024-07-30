@@ -80,6 +80,7 @@ class RoadSegmentationDataset():
                 A.HorizontalFlip(),
                 A.VerticalFlip(),
                 A.Rotate(limit=90, p=0.5),
+                A.RandomBrightnessContrast(p=0.4),
                 ToTensorV2(transpose_mask=True)
             ])
         

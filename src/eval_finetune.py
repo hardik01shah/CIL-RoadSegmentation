@@ -57,7 +57,7 @@ def initialize_models(config):
         classifiers.append(classifier)
         thresholds.append(model_config['threshold'])
 
-    return models, thresholds
+    return models, classifiers, thresholds
 
 def get_image_patches(img, patch_size):
     """

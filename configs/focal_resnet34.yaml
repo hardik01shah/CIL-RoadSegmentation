@@ -1,0 +1,44 @@
+base_experiment_dir: experiments
+ckpt_dir: experiments/focal_resnet34/checkpoints
+config_file: configs/focal_loss.yaml
+data:
+  data_dir: datasets/Full_Dataset
+  train_size: null
+  val_size: null
+device: cuda
+exp_dir: experiments/focal_resnet34
+experiment_name: focal_resnet34
+log_dir: experiments/focal_resnet34/logs
+logging:
+  num_images: 4
+  wandb:
+    group: tests
+    id: unet-test-0
+    mode: online
+loss:
+  name: focal
+  pos_weight: 1.0
+metrics:
+  eps: 1.0e-07
+  num_thresholds: 10
+  threshold: 0.5
+model:
+  backbone: resnet34
+  name: unet
+  pretrained: true
+seed: 0
+train:
+  batch_size: 4
+  log_interval: 1
+  num_epochs: 50
+  num_workers: 4
+  optimizer:
+    lr: 0.001
+    lr_scheduler: null
+    name: adam
+    weight_decay: 0.0
+  save_interval: 1
+val:
+  batch_size: 4
+  num_workers: 4
+  val_interval: 1

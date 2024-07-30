@@ -1,0 +1,56 @@
+device: cpu
+submission_name: eval_seventh
+test_data_dir: datasets/Contest_Dataset/test/images
+pred_dir_base: submissions
+patch_size: 256
+inference_approach: mean # union, mean, voting
+mean_threshold: 0.5
+resize: True
+metrics:
+  eps: 1.0e-7
+
+models: [
+  {
+    name: UnetPlusPlus,
+    backbone: resnet34,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/new-bce-resnet34/checkpoints/best_model.pth,
+    threshold: 0.16
+  },
+  {
+    name: UnetPlusPlus,
+    backbone: resnet50,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/new-bce-resnet50/checkpoints/best_model.pth,
+    threshold: 0.26
+  },
+  {
+    name: UnetPlusPlus,
+    backbone: resnet34,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/new-dice-resnet34/checkpoints/best_model.pth,
+    threshold: 0.05
+  },
+  {
+    name: UnetPlusPlus,
+    backbone: resnet50,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/new-dice-resnet50/checkpoints/best_model.pth,
+    threshold: 0.05
+  },
+  {
+    name: UnetPlusPlus,
+    backbone: resnet34,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/new-focal-resnet34/checkpoints/best_model.pth,
+    threshold: 0.16
+  },
+  {
+    name: UnetPlusPlus,
+    backbone: resnet50,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/new-focal-resnet50/checkpoints/best_model.pth,
+    threshold: 0.26
+  },
+  {
+    name: UnetPlusPlus,
+    backbone: resnet50,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old-focal-resnet50/checkpoints/best_model.pth,
+    threshold: 0.05
+  }
+]
+

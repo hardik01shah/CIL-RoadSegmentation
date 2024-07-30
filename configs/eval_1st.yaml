@@ -1,8 +1,11 @@
 device: cpu
-submission_name: eval_first
-test_data_dir: datasets/Contest_data/test/images
+submission_name: eval_first_fixed_vsix
+test_data_dir: datasets/Contest_Dataset/test/images
 pred_dir_base: submissions
 patch_size: 256
+inference_approach: mean # union, mean, voting
+mean_threshold: 0.2
+resize: True
 metrics:
   eps: 1.0e-7
 
@@ -25,12 +28,12 @@ models: [
     ckpt_path: experiments/dice_bce_resnet34/checkpoints/best_model.pth,
     threshold: 0.05
   },
-  {
-    name: unet,
-    backbone: resnet101,
-    ckpt_path: experiments/bce_resnet101/checkpoints/best_model.pth,
-    threshold: 0.16
-  },
+  # {
+  #   name: unet,
+  #   backbone: resnet101,
+  #   ckpt_path: experiments/bce_resnet101/checkpoints/best_model.pth,
+  #   threshold: 0.16
+  # },
   {
     name: unet,
     backbone: resnet101,

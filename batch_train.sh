@@ -11,6 +11,29 @@
 # python src/train.py --config=configs/patch-bce-timm101e.yaml
 
 # python src/train.py --config=configs/bce-enetb6.yaml
-python src/train.py --config=configs/bce-resnext50_32x4d.yaml
+# python src/train.py --config=configs/bce-resnext50_32x4d.yaml
 # python src/train.py --config=configs/bce-resnet101.yaml
 # python src/train.py --config=configs/bce-mobilenet_v2.yaml
+
+# python src/train.py --config=configs/New/bce-resnet34_basic.yaml
+# python src/train.py --config=configs/New/bce-resnet50_basic.yaml
+# python src/train.py --config=configs/New/dice-resnet34_basic.yaml
+# python src/train.py --config=configs/New/dice-resnet50_basic.yaml
+# python src/train.py --config=configs/New/focal-resnet34_basic.yaml
+# python src/train.py --config=configs/New/focal-resnet50_basic.yaml
+# python src/train.py --config=configs/New/focal-resnet50_old.yaml
+
+# python src/train.py --config=configs/New_cont/bce-resnet34_basic.yaml
+# python src/train.py --config=configs/New_cont/bce-resnet50_basic.yaml
+python src/train.py --config=configs/New_cont/dice-resnet34_basic.yaml
+python src/train.py --config=configs/New_cont/focal-resnet34_basic.yaml
+python src/train.py --config=configs/New_cont/dice-resnet50_basic.yaml
+python src/train.py --config=configs/New_cont/focal-resnet50_basic.yaml
+# python src/train.py --config=configs/New_cont/focal-resnet50_old.yaml
+
+
+
+
+
+
+
