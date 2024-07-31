@@ -101,6 +101,7 @@ def main():
 
         # Initialize the full prediction mask
         full_pred_mask = np.zeros((256, 256))
+        pred_mask_orig = np.zeros((256, 256))
 
         img = cv2.resize(img, (256,256))
 
@@ -133,13 +134,22 @@ def main():
                     if args.viz:
                         inv_warped_preds.append((pred*255).astype(np.uint8))
 
+                    if j == 0:
+                        pred_mask_orig = pred_mask_orig
+
                     full_pred_mask += pred
         
         full_pred_mask /= (len(models) * num_H)
-        full_pred_mask =  cv2.resize(full_pred_mask, (400,400))
+
+        # Add Border Cleaning with no HA
+        B_S =config['border_size']
+        pred_mask_orig[B_S:-B_S, B_S:-B_S] = full_pred_mask[B_S:-B_S, B_S:-B_S]
+
+        # Resizing Cleaned Mask
+        full_pred_mask =  cv2.resize(pred_mask_orig, (400,400))
 
         # Add prediction to the full prediction mask
-        full_pred_mask = (full_pred_mask > config['mean_threshold']).astype(np.uint8) 
+        full_pred_mask = (full_pred_mask > config['mean_threshold']).astype(np.uint8)
 
         # Remove small artifacts and close small holes in the full_pred_mask map
         full_pred_mask = remove_small_artifacts(full_pred_mask, threshold=8)
