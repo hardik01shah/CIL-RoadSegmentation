@@ -1,5 +1,16 @@
 # Road Segmentation CIL
 
+# Team (Team Name - Kalakand)
+- Hardik Shah [hashah@ethz.ch]
+- Ramanathan Rajaraman [rrajaraman@ethz.ch]
+- Shaswat Gupta [shagupta@ethz.ch]
+- Shrey Mittal [shmittal@ethz.ch]
+
+# [INSERT TITLE HERE]
+Road segmentation from aerial imagery remains a critical challenge in computer vision, with wide-ranging applications in autonomous driving systems, urban planning, and environmental monitoring. We explore existing state-of-the-art segmentation models and present our empirical findings for generalization on the test dataset provided. We trained using a weighted combination of loss functions and achieved a "placeholder F1-score...", demonstrating its effectiveness in accurate road extraction. The code and trained models are provided as supplementary material to facilitate further research and development in this area.
+
+We present a collection of approaches to road segmentation using deep learning and analyse their strengths and shortcomings. Our model is based on an ensemble of segmentation models from the PyTorch Segmentation Library, a framework well-suited for image segmentation tasks. We have trained our model on a combination of large-scale satellite image datasets, carefully considering the challenges of high-resolution data, including increased noise due to the scaling and morphing and with a special focus on the similarity to the train set provided in the competition.
+
 # Installation
 ```
 conda create --name cil python=3.9
@@ -12,40 +23,55 @@ pip install matplotlib
 ```
 
 # Directory Structure
+### Dataset Generation
 ```
-.
-├── configs/                       # Configuration files (e.g., hyperparameters, paths)
-├── data/                          # Dataset and related files
-│   ├── ethz-cil-road-segmentation-2024.zip   # Original dataset zip file
-│   ├── test/                      # Test dataset
-│   │   └── images/                # Test images
-│   ├── training/                  # Training dataset
-│   │   ├── groundtruth/           # Ground truth segmentation masks
-│   │   └── images/                # Training images
-│   ├── train.txt                  # List of training images
-│   └── val.txt                    # List of validation images
-├── mask_to_submission.py          # Script to convert masks to submission format
-├── notebooks/                     # Jupyter notebooks for exploration and analysis
-│   └── data_exploration.ipynb     # Data exploration notebook
-├── README.md                      # Project description and instructions
-├── scripts/                       # Utility scripts
-│   └── gen_img_list.py            # Script to generate image lists
-├── src/                           # Source code for training and evaluation
-│   ├── dataloader.py              # Data loading and preprocessing
-│   ├── eval_engine.py             # Evaluation engine
-│   ├── eval.py                    # Evaluation script
-│   ├── train_engine.py            # Training engine
-│   └── train.py                   # Training script
-├── submission_to_mask.py          # Script to convert submission format to masks
-└── utils/                         # Utility functions and scripts
-    ├── __init__.py                # Init file for utils package
-    ├── losses.py                  # Custom loss functions
-    ├── metrics.py                 # Custom metrics
-    └── visualization.py           # Visualization utilities (e.g., plotting images, segmentation results)
+pip install gdown
+cd /datasets
+bash ./download_data.sh
+python data_generation.py
 ```
 
-### Description
+### Training
+```
+# For sample run use ./configs/base.yaml as your PATH_TO_CONFIG
+python src/train.py --config=<PATH_TO_CONFIG>
 
+# For sample run use ./configs/base.yaml as your PATH_TO_CONFIG
+python src/train_finetune.py --config=<PATH_TO_CONFIG>
+```
+
+### Evaluation
+```
+# For sample run use ./configs/eval_base.yaml as your PATH_TO_CONFIG
+python src/eval.py --config=<PATH_TO_CONFIG>
+
+# For sample run use ./configs/eval_ha.yaml as your PATH_TO_CONFIG
+python src/eval.py --config=<PATH_TO_CONFIG>
+
+# For sample run use ./configs/eval_ha_pad_fullres.yaml as your PATH_TO_CONFIG
+python src/eval.py --config=<PATH_TO_CONFIG>
+
+# For sample run use ./configs/eval.yaml as your PATH_TO_CONFIG
+python src/eval_finetune.py --config=<PATH_TO_CONFIG>
+```
+
+### Models and Their (Used) Compatible Backbone Options
+- DeepLabV3/DeepLabV3++:
+    - tu-resnest50d
+    - tu-resnest101e
+    - tu-res2net101_26w_4s
+    - tu-res2next50d
+    - tu-res2next101e
+    - tu-efficientnet-b6
+- UNet/UNet++:
+    - resnet34
+    - resnet50
+    - resnet101
+    - resnext50_32x4d
+    - efficientnet-b6
+    - mobilenet_v2
+
+### File Description
 - **configs/**: Contains configuration files for setting hyperparameters and paths.
 - **data/**: Contains the dataset files, including the raw zip file, training and test images, and corresponding text files listing the images.
 - **mask_to_submission.py**: Converts segmentation masks to the submission format required for evaluation.
