@@ -135,7 +135,7 @@ def main():
                         inv_warped_preds.append((pred*255).astype(np.uint8))
 
                     if j == 0:
-                        pred_mask_orig = pred_mask_orig
+                        pred_mask_orig += pred / len(models)
 
                     full_pred_mask += pred
         
