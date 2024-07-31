@@ -25,11 +25,18 @@
 
 # python src/train.py --config=configs/New_cont/bce-resnet34_basic.yaml
 # python src/train.py --config=configs/New_cont/bce-resnet50_basic.yaml
-python src/train.py --config=configs/New_cont/dice-resnet34_basic.yaml
-python src/train.py --config=configs/New_cont/focal-resnet34_basic.yaml
-python src/train.py --config=configs/New_cont/dice-resnet50_basic.yaml
-python src/train.py --config=configs/New_cont/focal-resnet50_basic.yaml
+# python src/train.py --config=configs/New_cont/dice-resnet34_basic.yaml
+# python src/train.py --config=configs/New_cont/focal-resnet34_basic.yaml
+# python src/train.py --config=configs/New_cont/dice-resnet50_basic.yaml
+# python src/train.py --config=configs/New_cont/focal-resnet50_basic.yaml
 # python src/train.py --config=configs/New_cont/focal-resnet50_old.yaml
+
+python src/train.py --config=configs/Only_Aug/bce-resnet34_basic.yaml
+python src/train.py --config=configs/Only_Aug/bce-resnet50_basic.yaml
+python src/train.py --config=configs/Only_Aug/dice-resnet34_basic.yaml
+python src/train.py --config=configs/Only_Aug/focal-resnet34_basic.yaml
+python src/train.py --config=configs/Only_Aug/dice-resnet50_basic.yaml
+python src/train.py --config=configs/Only_Aug/focal-resnet50_basic.yaml
 
 
 

@@ -1,8 +1,8 @@
 seed: 0
 device: cuda
-experiment_name: new-focal-resnet50_cont
+experiment_name: new-focal-resnet34_only_cc_lr
 base_experiment_dir: experiments
-checkpoint: /project/Temp/CIL-RoadSegmentation/experiments/new-focal-resnet50/checkpoints/best_model.pth
+# checkpoint: /project/Temp/CIL-RoadSegmentation/experiments/bce-mobilenet_v2/checkpoints/best_model.pth
 freeze: False
 
 data:
@@ -28,20 +28,20 @@ metrics:
 
 model:
   name: UnetPlusPlus
-  backbone: resnet50
+  backbone: resnet34
   pretrained: true
 
 train:
   batch_size: 16
   num_workers: 4
-  num_epochs: 16
+  num_epochs: 30
   optimizer:
     name: adam
-    lr: 0.001
+    lr: 0.0001
     lr_scheduler: rop
-    weight_decay: 0.0001
+    weight_decay: 0.0
   log_interval: 100
-  save_interval: 5
+  save_interval: 20
 
 val:
   batch_size: 4

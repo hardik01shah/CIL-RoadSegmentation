@@ -121,11 +121,13 @@ class TrainEngine:
                     phase='train',
                     global_step=self.global_step
                 )
+                wandb.log({"train/lr": self.optimizer.param_groups[0]['lr']}, step=self.global_step)
 
             # For the last batch, log the predictions and ground truth
             if data_iter_step == len(self.train_loader) - 1:
                 self.log_predictions(image, gt, pred, phase='train')
-
+            
+            
     def log_predictions(self, image, gt, pred, phase):
         """
         Log the predictions, thresholded predictions, ground truth and images to wandb.
@@ -235,6 +237,7 @@ class TrainEngine:
                     self.log_predictions(image, gt, pred, phase='val')
         
         # Logging
+        loss_bkp = self.val_logs['loss']/self.val_logs['iterations']
         self.log(phase='val', global_step=self.global_step)
 
         # Compute the precision, recall and f1 scores for different thresholds
@@ -257,8 +260,8 @@ class TrainEngine:
         wandb.log({"val/pr_curve": wandb.Image(pr_img)}, step=self.global_step)
 
         if self.scheduler is not None:
-            self.scheduler.step(f1[best_idx])
-        return f1[best_idx]
+            self.scheduler.step(loss_bkp)
+        return loss_bkp
 
     def save_model(self, save_dir, ckpt_name):
         """

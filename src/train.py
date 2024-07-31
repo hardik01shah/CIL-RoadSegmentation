@@ -90,7 +90,7 @@ def train(config):
         raise NotImplementedError(f"Optimizer {config['train']['optimizer']['name']} not implemented.")
     
     if config['train']['optimizer']['lr_scheduler'] == "rop":
-        scheduler = ReduceLROnPlateau(optimizer, 'min')
+        scheduler = ReduceLROnPlateau(optimizer, 'min', patience = 2, factor = 0.5, threshold=0.005)
     elif config['train']['optimizer']['lr_scheduler'] == None:
         scheduler = None
     else:
@@ -161,7 +161,8 @@ def train(config):
     wandb.watch(model)
 
     # Train the model
-    best_f1 = 0.0
+    # best_f1 = 0.0
+    best_loss = 10e4
     for epoch in range(config['train']['num_epochs']):
         engine.train_one_epoch(epoch)
         
@@ -169,9 +170,9 @@ def train(config):
             engine.save_model(config['ckpt_dir'], f'model_{epoch}.pth')
 
         if epoch % config['val']['val_interval'] == 0:
-            cur_f1 = engine.validate()
-            if cur_f1 > best_f1:
-                best_f1 = cur_f1
+            cur_loss = engine.validate()
+            if cur_loss < best_loss:
+                best_loss = cur_loss
                 engine.save_model(config['ckpt_dir'], 'best_model.pth')
     
     wandb.finish()

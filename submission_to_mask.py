@@ -1,17 +1,17 @@
 #!/usr/bin/python
 import os
 import sys
-import Image
+from PIL import Image
 import math
 import matplotlib.image as mpimg
 import numpy as np
 
-label_file = 'dummy_submission.csv'
+label_file = '/project/Temp/CIL-RoadSegmentation/submissions/eval_ha_pad_fullres/eval_ha_pad_fullres.csv'
 
 h = 16
 w = h
-imgwidth = int(math.ceil((600.0/w))*w)
-imgheight = int(math.ceil((600.0/h))*h)
+imgwidth = int(math.ceil((400.0/w))*w)
+imgheight = int(math.ceil((400.0/h))*h)
 nc = 3
 
 # Convert an array of binary labels to a uint8
@@ -49,6 +49,6 @@ def reconstruct_from_labels(image_id):
 
     return im
 
-for i in range(1, 5):
+for i in range(160, 165):
     reconstruct_from_labels(i)
 
