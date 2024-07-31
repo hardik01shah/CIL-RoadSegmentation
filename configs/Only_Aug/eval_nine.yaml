@@ -1,5 +1,5 @@
 device: cuda
-submission_name: eval_nine_ensmbl
+submission_name: eval_nine_ensmbl_no_pp
 test_data_dir: datasets/Contest_Dataset/test/images
 pred_dir_base: submissions
 patch_size: 256

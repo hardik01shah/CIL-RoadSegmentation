@@ -126,7 +126,7 @@ class _Dataset():
 
         gt = (cv2.imread(gt_path, cv2.IMREAD_GRAYSCALE) > 0) * 255
         # gt = cv2.imread(gt_path, cv2.IMREAD_GRAYSCALE)
-        assert np.unique(gt).tolist() == [0, 255]
+        assert np.unique(gt).tolist() == [0, 255] or np.unique(gt).tolist() == [0]
         gt[gt == 255] = 1
         gt = gt.astype(np.float32)
         gt = np.expand_dims(gt, axis=-1) # add channel dimension HxW -> HxWx1

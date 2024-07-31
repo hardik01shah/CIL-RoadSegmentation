@@ -1,0 +1,51 @@
+seed: 0
+device: cuda
+experiment_name: old-dice-resnet34_only_cc_lr
+base_experiment_dir: experiments
+# checkpoint: /project/Temp/CIL-RoadSegmentation/experiments/bce-mobilenet_v2/checkpoints/best_model.pth
+freeze: False
+
+data:
+  data_dir: datasets/Old_Dataset
+  train_size: null
+  val_size: null
+
+logging:
+  num_images: 4
+  wandb:
+    mode: online
+    group: tests
+    id: unet-test-0
+
+loss:
+  name: bce_dice
+  pos_weight: 1.0
+
+metrics:
+  eps: 1.0e-7
+  threshold: 0.5      # threshold for binary classification
+  num_thresholds: 10  # number of thresholds for PR curve
+
+model:
+  name: UnetPlusPlus
+  backbone: resnet34
+  pretrained: true
+
+train:
+  batch_size: 16
+  num_workers: 4
+  num_epochs: 30
+  optimizer:
+    name: adam
+    lr: 0.0001
+    lr_scheduler: rop
+    weight_decay: 0.0
+  log_interval: 100
+  save_interval: 20
+
+val:
+  batch_size: 4
+  num_workers: 4
+  val_interval: 1
+  
+

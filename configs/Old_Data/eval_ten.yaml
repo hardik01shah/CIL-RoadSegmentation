@@ -1,0 +1,19 @@
+device: cuda
+submission_name: eval_ten_first_pp
+test_data_dir: datasets/Contest_Dataset/test/images
+pred_dir_base: submissions
+patch_size: 256
+inference_approach: mean # union, mean, voting
+mean_threshold: 0.37
+resize: True
+metrics:
+  eps: 1.0e-7
+
+models: [
+  {
+    name: UnetPlusPlus,
+    backbone: resnet34,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old_bce-resnet34_only_cc_lr/checkpoints/best_model.pth,
+    threshold: 0.37
+  }
+]

@@ -201,8 +201,8 @@ def main():
                     raise ValueError(f"Inference approach {inference_approach} not recognized.")
 
         # Remove small artifacts and close small holes in the full_pred_mask map
-        full_pred_mask = remove_small_artifacts(full_pred_mask, threshold=8)
-        full_pred_mask = close_small_holes(full_pred_mask, kernel_size=16)
+        # full_pred_mask = remove_small_artifacts(full_pred_mask, threshold=8)
+        # full_pred_mask = close_small_holes(full_pred_mask, kernel_size=16)
 
         # add a buffer of 1 pixel around the walls (agent radius)
         # full_pred_mask = 1-binary_erosion(1-full_pred_mask, iterations=1, structure=np.ones((2, 2)), border_value=1)

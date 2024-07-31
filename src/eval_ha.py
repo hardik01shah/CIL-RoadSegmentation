@@ -152,8 +152,8 @@ def main():
         full_pred_mask = (full_pred_mask > config['mean_threshold']).astype(np.uint8)
 
         # Remove small artifacts and close small holes in the full_pred_mask map
-        full_pred_mask = remove_small_artifacts(full_pred_mask, threshold=8)
-        full_pred_mask = close_small_holes(full_pred_mask, kernel_size=16)
+        # full_pred_mask = remove_small_artifacts(full_pred_mask, threshold=8)
+        # full_pred_mask = close_small_holes(full_pred_mask, kernel_size=16)
 
         if args.viz:
             # show the warped images and heatmaps for all homographies
