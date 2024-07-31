@@ -11,6 +11,12 @@ Road segmentation from aerial imagery remains a critical challenge in computer v
 
 We present a collection of approaches to road segmentation using deep learning and analyse their strengths and shortcomings. Our model is based on an ensemble of segmentation models from the PyTorch Segmentation Library, a framework well-suited for image segmentation tasks. We have trained our model on a combination of large-scale satellite image datasets, carefully considering the challenges of high-resolution data, including increased noise due to the scaling and morphing and with a special focus on the similarity to the train set provided in the competition.
 
+| Input Image | Ground Truth | Prediction Heatmap |
+|-------------|--------------|--------------------|
+| ![Example Image](sample_images/data1.png) | ![Example Image](sample_images/gt1.png) | ![Example Image](sample_images/p1.png) |
+| ![Example Image](sample_images/data2.png) | ![Example Image](sample_images/gt2.png) | ![Example Image](sample_images/p2.png) |
+| ![Example Image](sample_images/data3.png) | ![Example Image](sample_images/gt3.png) | ![Example Image](sample_images/p3.png) |
+
 # Installation
 ```
 conda create --name cil python=3.9
@@ -81,3 +87,14 @@ python src/eval_finetune.py --config=<PATH_TO_CONFIG>
 - **src/**: Contains the main source code for the project, including scripts for data loading, training, and evaluation.
 - **submission_to_mask.py**: Converts the submission format back to segmentation masks for analysis.
 - **utils/**: Contains utility functions and scripts for losses, metrics, and visualization.
+
+# Results
+| Loss        | Encoder  | F1  | Accuracy    |
+|-------------|----------|-----|-------------|
+| wBCE        | ResNet34 | 150 | Sweet       |
+| wBCE        | ResNet50 | 120 | Sweet       |
+| DICE+BCE    | ResNet34 | 130 | Sweet/Tart  |
+| DICE+BCE    | ResNet50 | 70  | Tart        |
+| Focal       | ResNet34 | 5   | Sweet/Tart  |
+| Focal       | ResNet50 | 5   | Sweet/Tart  |
+
