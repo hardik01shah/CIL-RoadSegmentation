@@ -200,7 +200,10 @@ def main():
             gt = (cv2.imread(gt_filename, cv2.IMREAD_GRAYSCALE) > 0) * 255
             gt[gt == 255] = 1
             gt = gt.astype(np.float32)
-            metrics = segmentation_metrics_eval(full_pred_mask, gt)
+            if config['border_size'] is not None:
+                metrics = segmentation_metrics_eval(full_pred_mask[B_S:-B_S, B_S:-B_S], gt[B_S:-B_S, B_S:-B_S])
+            else:
+                metrics = segmentation_metrics_eval(full_pred_mask, gt)
             for key, value in metrics.items():
                 total_metrics[key].append(value)
 
