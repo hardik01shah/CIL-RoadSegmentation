@@ -53,12 +53,12 @@ You can Download the Best Weights we used for our submissions from https://polyb
 python src/eval.py --config=<PATH_TO_CONFIG>
 
 # For sample run use ./configs/eval_ha.yaml as your PATH_TO_CONFIG
-python src/eval.py --config=<PATH_TO_CONFIG>
+python src/eval_ha.py --config=<PATH_TO_CONFIG>
 
 # For sample run use ./configs/eval_ha_pad_fullres.yaml as your PATH_TO_CONFIG
-python src/eval.py --config=<PATH_TO_CONFIG>
+python src/eval_ha_pad_fullres.py --config=<PATH_TO_CONFIG>
 
-# For sample run use ./configs/eval.yaml as your PATH_TO_CONFIG
+# For sample run use ./configs/eval_base.yaml as your PATH_TO_CONFIG
 python src/eval_finetune.py --config=<PATH_TO_CONFIG>
 ```
 
@@ -90,12 +90,14 @@ python src/eval_finetune.py --config=<PATH_TO_CONFIG>
 - **utils/**: Contains utility functions and scripts for losses, metrics, and visualization.
 
 # Results
-| Loss        | Encoder  | F1  | Accuracy    |
-|-------------|----------|-----|-------------|
-| wBCE        | ResNet34 | 150 | Sweet       |
-| wBCE        | ResNet50 | 120 | Sweet       |
-| DICE+BCE    | ResNet34 | 130 | Sweet/Tart  |
-| DICE+BCE    | ResNet50 | 70  | Tart        |
-| Focal       | ResNet34 | 5   | Sweet/Tart  |
-| Focal       | ResNet50 | 5   | Sweet/Tart  |
+| Loss     | Encoder   | F1   | Accuracy | mIoU | Precision |
+|----------|-----------|------|----------|------|-----------|
+| wBCE     | ResNet34  | 0.785 | 0.929    | 0.661 | 0.782     |
+| wBCE     | ResNet50  | 0.789 | 0.931    | 0.671 | 0.776     |
+| DICE+BCE | ResNet34  | 0.791 | **0.934**| **0.669** | **0.822** |
+| **DICE+BCE** | **ResNet50** | **0.796** | **0.934** | **0.675** | 0.815 |
+| Focal    | ResNet34  | 0.782 | 0.926    | 0.657 | 0.767     |
+| Focal    | ResNet50  | **0.796** | 0.932 | **0.675** | 0.796 |
+| -        | Combined  | 0.811 | 0.938    | 0.696 | 0.809     |
+
 
