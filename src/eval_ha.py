@@ -77,6 +77,15 @@ def main():
     # initialize models
     models, thresholds = initialize_models(config)
 
+    # homography adaptation parameters
+    homography_params = config['homography']
+    num_H = config['num_homographies']
+    
+    # Load the test set
+    test_dir = config['test_data_dir']
+    image_filenames = [os.path.join(test_dir, name) for name in os.listdir(test_dir)]
+    pred_filenames = []
+
     # If gt_data_dir is provided, use the ground truth masks for evaluation
     if 'gt_data_dir' in config:
         gt_dir = config['gt_data_dir']
@@ -90,15 +99,6 @@ def main():
             'f1': [],
             'miou': [],
         }
-
-    # homography adaptation parameters
-    homography_params = config['homography']
-    num_H = config['num_homographies']
-    
-    # Load the test set
-    test_dir = config['test_data_dir']
-    image_filenames = [os.path.join(test_dir, name) for name in os.listdir(test_dir)]
-    pred_filenames = []
 
     # Inference for each image on the ensemble of models
     for image_filename in tqdm(image_filenames):
