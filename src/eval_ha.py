@@ -19,6 +19,7 @@ from utils.homography import sample_homography_corners
 import matplotlib.pyplot as plt
 
 from utils.mask_to_submission import masks_to_submission
+from utils.metrics import segmentation_metrics_eval
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -76,6 +77,20 @@ def main():
     # initialize models
     models, thresholds = initialize_models(config)
 
+    # If gt_data_dir is provided, use the ground truth masks for evaluation
+    if 'gt_data_dir' in config:
+        gt_dir = config['gt_data_dir']
+        gt_filenames = [os.path.join(gt_dir, name) for name in os.listdir(gt_dir)]
+        assert len(gt_filenames) == len(image_filenames), "Number of ground truth masks does not match the number of test images."
+
+        total_metrics = {
+            'accuracy': [],
+            'precision': [],
+            'recall': [],
+            'f1': [],
+            'miou': [],
+        }
+
     # homography adaptation parameters
     homography_params = config['homography']
     num_H = config['num_homographies']
@@ -90,13 +105,6 @@ def main():
         img = cv2.imread(image_filename)
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-        if args.viz:
-            viz_img = img.copy()
-            warped_viz_imgs = []
-            warped_preds = []
-            inv_warped_preds = []
-        
         img = img.astype(np.float32) / 255.0
 
         # Initialize the full prediction mask
@@ -104,6 +112,12 @@ def main():
         pred_mask_orig = np.zeros((256, 256))
 
         img = cv2.resize(img, (256,256))
+
+        if args.viz:
+            viz_img = img.copy()
+            warped_viz_imgs = []
+            warped_preds = []
+            inv_warped_preds = []
 
         for model, _ in zip(models, thresholds):
             with torch.no_grad():
@@ -180,11 +194,27 @@ def main():
             plt.show()
             plt.close()
 
+        # if gt_data_dir is provided, evaluate the prediction
+        if 'gt_data_dir' in config:
+            gt_filename = os.path.join(gt_dir, os.path.basename(image_filename))
+            gt = (cv2.imread(gt_filename, cv2.IMREAD_GRAYSCALE) > 0) * 255
+            gt[gt == 255] = 1
+            gt = gt.astype(np.float32)
+            metrics = segmentation_metrics_eval(full_pred_mask, gt)
+            for key, value in metrics.items():
+                total_metrics[key].append(value)
+
         # Save the prediction mask
         pred_filename = os.path.join(pred_dir, os.path.basename(image_filename))
         pred_img = Image.fromarray((full_pred_mask)*255)
         pred_img.save(pred_filename)
         pred_filenames.append(pred_filename)
+
+    # if gt_data_dir is provided, print the evaluation metrics
+    if 'gt_data_dir' in config:
+        print("Evaluation Metrics:")
+        for key, value in total_metrics.items():
+            print(f"{key}: {np.mean(value)}")
 
     # Generate the submission file
     masks_to_submission(submission_path, pred_dir, *pred_filenames)
