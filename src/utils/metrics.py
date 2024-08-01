@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
+import numpy as np
 
 def segmentation_metrics(pred, gt, config, phase='train'):
     """
@@ -39,6 +40,47 @@ def segmentation_metrics(pred, gt, config, phase='train'):
         'f1': f1,
         'miou': miou
     }
+
+def segmentation_metrics_eval(pred, gt, threshold=0.5, eps=1e-7):
+    """
+    Compute the segmentation metrics during Eval: Accuracy, Precision, Recall, F1 Score, and mIoU.
+    
+    Args:
+        pred (numpy.ndarray): Predicted segmentation mask. Shape (H, W).
+        gt (numpy.ndarray): Ground truth segmentation mask. Shape (H, W).
+        threshold (float): Threshold for binarizing the prediction mask.
+    """
+
+    # Binarize the prediction mask only if threshold is provided
+    if threshold is not None:
+        pred = (pred > threshold).astype(np.float32)
+    
+    assert pred.shape == gt.shape, "Prediction and ground truth masks should have the same shape."
+    assert (np.unique(pred).tolist() == [0, 1]) or (np.unique(pred).tolist() == [0]), f"Prediction mask should be binarized. Values found: {np.unique(pred).tolist()}"
+    assert np.unique(gt).tolist() == [0, 1], f"Ground truth mask should be binarized. Values found: {np.unique(gt).tolist()}"
+
+    tp = (pred * gt).sum()
+    tn = ((1 - pred) * (1 - gt)).sum()
+    fp = (pred * (1 - gt)).sum()
+    fn = ((1 - pred) * gt).sum()
+
+    accuracy = (tp + tn) / (tp + tn + fp + fn + eps)
+    precision = tp / (tp + fp + eps)
+    recall = tp / (tp + fn + eps)
+    f1 = (2 * precision * recall) / (precision + recall + eps)
+
+    intersection = (pred * gt).sum() 
+    union = (pred + gt).sum() - intersection
+    miou = intersection / (union + eps)
+
+    return {
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1': f1,
+        'miou': miou
+    }
+    
 
 def update_pr_curve(pred, gt, thresholds):
     """
