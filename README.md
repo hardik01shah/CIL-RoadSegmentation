@@ -1,13 +1,13 @@
 # Road Segmentation CIL
 
-# Team (Team Name - Kalakand)
+# Team Name - Kalakand
 - Hardik Shah [hashah@ethz.ch]
 - Ramanathan Rajaraman [rrajaraman@ethz.ch]
 - Shaswat Gupta [shagupta@ethz.ch]
 - Shrey Mittal [shmittal@ethz.ch]
 
-# [INSERT TITLE HERE]
-Road segmentation from aerial imagery remains a critical challenge in computer vision, with wide-ranging applications in autonomous driving systems, urban planning, and environmental monitoring. We explore existing state-of-the-art segmentation models and present our empirical findings for generalization on the test dataset provided. We trained using a weighted combination of loss functions and achieved a "placeholder F1-score...", demonstrating its effectiveness in accurate road extraction. The code and trained models are provided as supplementary material to facilitate further research and development in this area.
+# Optimizing Aerial Road Segmentation via Deep Learning and Multi-View Ensembling
+Road segmentation from aerial imagery remains a critical challenge in computer vision, with wide-ranging applications in autonomous driving systems, urban planning, and environmental monitoring. We explore existing state-of-the-art segmentation models and present our empirical findings for generalization on the test dataset provided. We trained using a weighted combination of loss functions and achieved a public leaderboard score of 0.9258, demonstrating its effectiveness in accurate road extraction. The code and trained models are provided as supplementary material to facilitate further research and development in this area.
 
 We present a collection of approaches to road segmentation using deep learning and analyse their strengths and shortcomings. Our model is based on an ensemble of segmentation models from the PyTorch Segmentation Library, a framework well-suited for image segmentation tasks. We have trained our model on a combination of large-scale satellite image datasets, carefully considering the challenges of high-resolution data, including increased noise due to the scaling and morphing and with a special focus on the similarity to the train set provided in the competition.
 
@@ -47,6 +47,7 @@ python src/train_finetune.py --config=<PATH_TO_CONFIG>
 ```
 
 ### Evaluation
+You can Download the Best Weights we used for our submissions from https://polybox.ethz.ch/index.php/s/BOxZML55wTx7Rf8
 ```
 # For sample run use ./configs/eval_base.yaml as your PATH_TO_CONFIG
 python src/eval.py --config=<PATH_TO_CONFIG>

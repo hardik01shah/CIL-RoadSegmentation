@@ -1,19 +1,56 @@
 device: cuda
-submission_name: eval_ten_first_pp
-test_data_dir: datasets/Contest_Dataset/test/images
+submission_name: eval_ten_values
+test_data_dir: datasets/Contest_Dataset/training/images
+gt_data_dir: datasets/Contest_Dataset/training/groundtruth
 pred_dir_base: submissions
 patch_size: 256
 inference_approach: mean # union, mean, voting
-mean_threshold: 0.37
+mean_threshold: 0.3
 resize: True
 metrics:
   eps: 1.0e-7
 
 models: [
+  # {
+  #   name: UnetPlusPlus,
+  #   backbone: resnet34,
+  #   ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old_bce-resnet34_only_cc_lr/checkpoints/best_model.pth,
+  #   threshold: 0.37
+  # },
+  # {
+  #   name: UnetPlusPlus,
+  #   backbone: resnet50,
+  #   ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old-bce-resnet50_only_cc_lr/checkpoints/best_model.pth,
+  #   threshold: 0.27
+  # },
+  # {
+  #   name: UnetPlusPlus,
+  #   backbone: resnet34,
+  #   ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old-dice-resnet34_only_cc_lr/checkpoints/best_model.pth,
+  #   threshold: 0.27
+  # },
+  # {
+  #   name: UnetPlusPlus,
+  #   backbone: resnet50,
+  #   ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old-dice-resnet50_only_cc_lr/checkpoints/best_model.pth,
+  #   threshold: 0.27
+  # },
+  # {
+  #   name: UnetPlusPlus,
+  #   backbone: resnet34,
+  #   ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old-focal-resnet34_only_cc_lr/checkpoints/best_model.pth,
+  #   threshold: 0.27
+  # },
+  # {
+  #   name: UnetPlusPlus,
+  #   backbone: resnet50,
+  #   ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old-focal-resnet50_only_cc_lr/checkpoints/best_model.pth,
+  #   threshold: 0.27
+  # }
   {
-    name: UnetPlusPlus,
-    backbone: resnet34,
-    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/old_bce-resnet34_only_cc_lr/checkpoints/best_model.pth,
-    threshold: 0.37
+    name: DeepLabV3Plus,
+    backbone: timm-efficientnet-b6,
+    ckpt_path: /project/Temp/CIL-RoadSegmentation/experiments/patch-bce-timm-enb6/checkpoints/best_model.pth,
+    threshold: 0.27
   }
 ]
