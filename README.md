@@ -1,9 +1,10 @@
 # Road Segmentation from Aerial Imagery | [Computational Intelligence Lab](https://www.vorlesungen.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?semkez=2024S&ansicht=ALLE&lerneinheitId=176863&lang=en), Spring 2024 | ETH Zurich
 
-# Team Name - Kalakand
+Report can be found [here](https://drive.google.com/file/d/1kTTRqF9tNvjI0pY-kvPc3jsBABSQkEWk/view?usp=sharing).
+
+# Contributors:
 - Hardik Shah [hashah@ethz.ch]
 - Ramanathan Rajaraman [rrajaraman@ethz.ch]
-- Shaswat Gupta [shagupta@ethz.ch]
 - Shrey Mittal [shmittal@ethz.ch]
 
 # Optimizing Aerial Road Segmentation via Deep Learning and Multi-View Ensembling
